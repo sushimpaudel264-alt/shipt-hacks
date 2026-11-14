@@ -1,6 +1,6 @@
-# LearnLoop architecture
+# CodeLingo architecture
 
-LearnLoop is built for students whose internet works at school but not at home. The design rule is:
+CodeLingo is built for students whose internet works at school but not at home. The design rule is:
 **the student's device is the source of truth; the server is a place to download from and sync to.**
 
 ## The flow
@@ -12,7 +12,7 @@ LearnLoop is built for students whose internet works at school but not at home. 
           │                                   │                             (online event / 60 s / Background Sync)
           ▼                                   ▼                                     │
   ┌──────────────────────┐   complete lesson / submit quiz            GET /api/health (5 s timeout)
-  │ IndexedDB "learnloop"│◄──── one Dexie transaction writes ─────┐            │
+  │ IndexedDB "codelingo"│◄──── one Dexie transaction writes ─────┐            │
   │  coursePackages      │      progress + XP + streak + badges   │            ▼
   │  progress            │      AND their sync events             │   POST /api/sync (batches of 50)
   │  quizResults         │                                        │            │
@@ -40,7 +40,7 @@ download at school → IndexedDB → learn offline → sync queue → `/api/sync
   - AI, sync, health, package and contributor routes: network-only.
   - Course pages are pre-cached right after a course is downloaded.
 
-### Dexie tables (database `learnloop`)
+### Dexie tables (database `codelingo`)
 
 | Table | Key / indexes | Holds |
 |---|---|---|
@@ -160,4 +160,4 @@ Common error codes: `VALIDATION_ERROR` (400), `INVALID_JSON` (400), `UNAUTHENTIC
 - `/api/sync` trusts XP calculated on the device (a real server would recompute it from lesson definitions).
 - In-memory server state resets on serverless cold starts.
 - Live Gemini mode is implemented but only mock mode is covered by tests.
-- Background Sync needs an open LearnLoop tab; the online event and the 60 s interval cover other browsers.
+- Background Sync needs an open CodeLingo tab; the online event and the 60 s interval cover other browsers.

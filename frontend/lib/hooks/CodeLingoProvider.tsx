@@ -1,6 +1,6 @@
 "use client";
 /**
- * Wrap the app with <LearnLoopProvider> once (app/layout.tsx). It:
+ * Wrap the app with <CodeLingoProvider> once (app/layout.tsx). It:
  *  - creates the React Query client (offline-friendly defaults),
  *  - seeds the local student on first run,
  *  - starts the sync engine (startup / online / 60s interval / Background Sync triggers),
@@ -21,7 +21,7 @@ function makeQueryClient(): QueryClient {
   });
 }
 
-export interface LearnLoopProviderProps {
+export interface CodeLingoProviderProps {
   children: ReactNode;
   /**
    * Page URL patterns to cache for offline use. Defaults:
@@ -30,7 +30,7 @@ export interface LearnLoopProviderProps {
   offlinePages?: Partial<OfflinePagesConfig>;
 }
 
-export function LearnLoopProvider({ children, offlinePages }: LearnLoopProviderProps) {
+export function CodeLingoProvider({ children, offlinePages }: CodeLingoProviderProps) {
   const [queryClient] = useState(makeQueryClient);
 
   // Set synchronously so download hooks see the config on the first render.
@@ -40,7 +40,7 @@ export function LearnLoopProvider({ children, offlinePages }: LearnLoopProviderP
     let stop: (() => void) | undefined;
     void studentRepo
       .getStudent()
-      .catch((err) => console.error("[learnloop] could not open local database", err))
+      .catch((err) => console.error("[codelingo] could not open local database", err))
       .finally(() => {
         stop = startSyncEngine();
       });

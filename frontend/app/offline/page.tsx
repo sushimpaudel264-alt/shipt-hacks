@@ -2,7 +2,7 @@
  * Offline fallback served by the service worker when a page was never cached.
  * Backend-owned placeholder: frontend teammate, feel free to restyle (keep the route at /offline).
  */
-export const metadata = { title: "Offline · LearnLoop" };
+export const metadata = { title: "Offline · CodeLingo" };
 
 export default function OfflinePage() {
   return (

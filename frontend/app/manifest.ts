@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "LearnLoop",
-    short_name: "LearnLoop",
+    name: "CodeLingo",
+    short_name: "CodeLingo",
     description: "Download at school. Learn anywhere.",
     start_url: "/",
     display: "standalone",

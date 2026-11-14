@@ -19,7 +19,7 @@ const SYNC_BATCH_SIZE = 50;
 const SYNC_INTERVAL_MS = 60_000;
 const BACKOFF_BASE_MS = 2_000;
 const BACKOFF_MAX_MS = 60_000;
-const BACKGROUND_SYNC_TAG = "learnloop-sync";
+const BACKGROUND_SYNC_TAG = "codelingo-sync";
 
 let fetchImpl: typeof fetch = (...args) => fetch(...args);
 let running: Promise<SyncState> | null = null;
@@ -142,7 +142,7 @@ const onOffline = () => {
   void refreshCounts();
 };
 const onSwMessage = (event: MessageEvent) => {
-  if ((event.data as { type?: string } | null)?.type === "LEARNLOOP_SYNC_REQUESTED") void syncNow({ force: true });
+  if ((event.data as { type?: string } | null)?.type === "CODELINGO_SYNC_REQUESTED") void syncNow({ force: true });
 };
 
 /** Starts listeners + interval. Idempotent; returns a stop function. */

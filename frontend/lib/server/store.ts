@@ -64,11 +64,11 @@ function createStore(): Store {
   };
 }
 
-const globalForStore = globalThis as unknown as { __learnloopStore?: Store };
+const globalForStore = globalThis as unknown as { __codelingoStore?: Store };
 
 export function getStore(): Store {
-  globalForStore.__learnloopStore ??= createStore();
-  return globalForStore.__learnloopStore;
+  globalForStore.__codelingoStore ??= createStore();
+  return globalForStore.__codelingoStore;
 }
 
 export function getStudentRecord(studentId: string): ServerStudentRecord {
@@ -83,7 +83,7 @@ export function getStudentRecord(studentId: string): ServerStudentRecord {
 
 /** Test helper: reset to seed state. */
 export function resetStore(): void {
-  globalForStore.__learnloopStore = createStore();
+  globalForStore.__codelingoStore = createStore();
 }
 
 export const KNOWN_BADGE_IDS = new Set(BADGES.map((b) => b.id));

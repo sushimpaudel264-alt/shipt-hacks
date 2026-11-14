@@ -1,8 +1,8 @@
 /**
  * Everything the UI needs for data. Import from "@/lib/hooks".
- * Requires <LearnLoopProvider> (already in app/layout.tsx). See FRONTEND_GUIDE.md.
+ * Requires <CodeLingoProvider> (already in app/layout.tsx). See FRONTEND_GUIDE.md.
  */
-export { LearnLoopProvider, type LearnLoopProviderProps } from "./LearnLoopProvider";
+export { CodeLingoProvider, type CodeLingoProviderProps } from "./CodeLingoProvider";
 export * from "./useCourses";
 export * from "./useProgress";
 export * from "./useStudent";

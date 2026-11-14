@@ -5,7 +5,7 @@ import { checkHealth } from "@/lib/sync";
 export interface OnlineStatus {
   /** navigator.onLine: the device has a network interface up. */
   isOnline: boolean;
-  /** /api/health actually answered. This is the one to trust for "can I reach LearnLoop?". */
+  /** /api/health actually answered. This is the one to trust for "can I reach CodeLingo?". */
   isReachable: boolean;
   lastCheckedAt: string | null;
   recheck: () => Promise<boolean>;

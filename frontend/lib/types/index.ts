@@ -1,5 +1,5 @@
 /**
- * LearnLoop shared TypeScript types. Import from "@/lib/types".
+ * CodeLingo shared TypeScript types. Import from "@/lib/types".
  * All types are inferred from the Zod schemas in "@/lib/schemas".
  */
 import type { z } from "zod";

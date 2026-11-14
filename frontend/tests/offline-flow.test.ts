@@ -4,7 +4,7 @@
  */
 import "fake-indexeddb/auto";
 import { beforeEach, describe, expect, it } from "vitest";
-import { courseRepo, LearnLoopDB, progressRepo, setDBForTests, studentRepo, syncRepo } from "@/lib/db";
+import { courseRepo, CodeLingoDB, progressRepo, setDBForTests, studentRepo, syncRepo } from "@/lib/db";
 import { addDays, toLocalDate } from "@/lib/gamification";
 import { SEED_COURSES } from "@/lib/mock";
 import { resetStore } from "@/lib/server";
@@ -16,7 +16,7 @@ const perfectAnswers = variables.quiz.questions.map((q) => ({ questionId: q.id, 
 
 let dbCount = 0;
 beforeEach(() => {
-  setDBForTests(new LearnLoopDB(`learnloop-test-${++dbCount}`));
+  setDBForTests(new CodeLingoDB(`codelingo-test-${++dbCount}`));
   resetStore();
   resetSyncEngineForTests();
   network.online = true;

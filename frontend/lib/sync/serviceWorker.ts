@@ -6,7 +6,7 @@
 
 /**
  * Which pages to cache for offline use. Configured by the UI through
- * <LearnLoopProvider offlinePages={...}> (see FRONTEND_GUIDE.md), so nobody has to edit lib/.
+ * <CodeLingoProvider offlinePages={...}> (see FRONTEND_GUIDE.md), so nobody has to edit lib/.
  * Placeholders: {courseId}, {slug}, {lessonId} (patterns with {lessonId} expand once per lesson).
  */
 export interface OfflinePagesConfig {
@@ -43,7 +43,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     void cachePages(offlinePages.always);
     return reg;
   } catch (err) {
-    console.warn("[learnloop] service worker registration failed", err);
+    console.warn("[codelingo] service worker registration failed", err);
     return null;
   }
 }
@@ -52,7 +52,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 export async function cachePages(urls: string[]): Promise<void> {
   if (!isServiceWorkerEnabled() || urls.length === 0) return;
   const reg = await navigator.serviceWorker.ready;
-  reg.active?.postMessage({ type: "LEARNLOOP_CACHE_URLS", urls });
+  reg.active?.postMessage({ type: "CODELINGO_CACHE_URLS", urls });
 }
 
 /** Caches every configured page for a course (called after download / AI generation). */

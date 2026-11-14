@@ -1,5 +1,5 @@
 /**
- * LearnLoop shared contracts (Zod).
+ * CodeLingo shared contracts (Zod).
  *
  * Every type the frontend uses is inferred from these schemas (see lib/types),
  * so validation and typing can never drift apart. Official, contributor and

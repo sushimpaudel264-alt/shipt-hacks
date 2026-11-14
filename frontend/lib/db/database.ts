@@ -1,5 +1,5 @@
 /**
- * IndexedDB (Dexie) database "learnloop": the source of truth for everything offline.
+ * IndexedDB (Dexie) database "codelingo": the source of truth for everything offline.
  * Browser-only: never call getDB() during SSR (it throws a clear error instead of crashing obscurely).
  */
 import Dexie, { type EntityTable, type Table } from "dexie";
@@ -18,7 +18,7 @@ interface MetaRow {
   value: unknown;
 }
 
-export class LearnLoopDB extends Dexie {
+export class CodeLingoDB extends Dexie {
   coursePackages!: EntityTable<DownloadedCourse, "id">;
   aiCourses!: EntityTable<AICourseRow, "id">;
   progress!: Table<Progress, [string, string]>;
@@ -27,7 +27,7 @@ export class LearnLoopDB extends Dexie {
   syncQueue!: EntityTable<SyncEvent, "id">;
   meta!: EntityTable<MetaRow, "key">;
 
-  constructor(name = "learnloop") {
+  constructor(name = "codelingo") {
     super(name);
     this.version(1).stores({
       coursePackages: "id, version, downloadedAt, sizeBytes, source",
@@ -41,22 +41,22 @@ export class LearnLoopDB extends Dexie {
   }
 }
 
-let instance: LearnLoopDB | null = null;
+let instance: CodeLingoDB | null = null;
 
 export function isBrowserDBAvailable(): boolean {
   return typeof window !== "undefined" && typeof indexedDB !== "undefined";
 }
 
-export function getDB(): LearnLoopDB {
+export function getDB(): CodeLingoDB {
   if (typeof indexedDB === "undefined") {
-    throw new Error("LearnLoop database is only available in the browser (IndexedDB missing).");
+    throw new Error("CodeLingo database is only available in the browser (IndexedDB missing).");
   }
-  instance ??= new LearnLoopDB();
+  instance ??= new CodeLingoDB();
   return instance;
 }
 
 /** Tests only: swap in a fresh database (e.g. backed by fake-indexeddb). */
-export function setDBForTests(db: LearnLoopDB | null): void {
+export function setDBForTests(db: CodeLingoDB | null): void {
   instance = db;
 }
 

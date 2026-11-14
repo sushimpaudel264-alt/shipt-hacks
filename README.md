@@ -1,12 +1,12 @@
-# LearnLoop
+# CodeLingo
 
 **Download at school. Learn anywhere.**
 
-LearnLoop is an offline-first learning app (PWA) for students ages 8–16 on school Chromebooks with unreliable home internet.
+CodeLingo is an offline-first learning app (PWA) for students ages 8–16 on school Chromebooks with unreliable home internet.
 Students download courses while on school WiFi, then learn at home with no connection: lessons, quizzes, XP, streaks and badges all work offline.
 Progress syncs back automatically when they reconnect. Teachers and community partners can publish courses, and an AI tutor ("Nova") can generate new courses and answer questions.
 
-**Live demo:** https://learn-offline-two.vercel.app
+**Live demo:** https://codelingo-bhm.vercel.app
 
 ## Run locally
 
@@ -39,7 +39,7 @@ frontend/
 │   ├── api/                  API route handlers (server). One standard pattern: see BACKEND.md
 │   ├── debug/data/           Diagnostics page that exercises every hook
 │   ├── offline/              Offline fallback page served by the service worker
-│   ├── layout.tsx            Root layout (wraps the app in <LearnLoopProvider>)
+│   ├── layout.tsx            Root layout (wraps the app in <CodeLingoProvider>)
 │   └── page.tsx              Starter home page (UI teams replace this)
 ├── lib/
 │   ├── types/                Shared TypeScript types (inferred from schemas)
@@ -50,7 +50,7 @@ frontend/
 │   ├── sync/                 Sync engine, connectivity checks, service worker helpers (browser)
 │   ├── server/               In-memory store + API business logic (server-only)
 │   ├── ai/                   Gemini services, prompts, mock AI (server-only)
-│   └── hooks/                React Query hooks + <LearnLoopProvider>: the ONLY data API for UI code
+│   └── hooks/                React Query hooks + <CodeLingoProvider>: the ONLY data API for UI code
 ├── public/sw.js              Service worker
 ├── tests/                    Vitest suites
 ├── BACKEND.md                Architecture: offline-first design, sync, AI, API routes

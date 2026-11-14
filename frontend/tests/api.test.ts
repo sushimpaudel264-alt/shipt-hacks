@@ -3,7 +3,7 @@
  */
 import "fake-indexeddb/auto";
 import { beforeEach, describe, expect, it } from "vitest";
-import { courseRepo, LearnLoopDB, progressRepo, setDBForTests, studentRepo } from "@/lib/db";
+import { courseRepo, CodeLingoDB, progressRepo, setDBForTests, studentRepo } from "@/lib/db";
 import { CourseSchema, GeneratedQuizSchema, LearningPathSchema, TutorResponseSchema } from "@/lib/schemas";
 import { resetStore } from "@/lib/server";
 import { SEED_COURSES } from "@/lib/mock";
@@ -18,7 +18,7 @@ let dbCount = 0;
 beforeEach(() => {
   resetStore();
   network.online = true;
-  setDBForTests(new LearnLoopDB(`learnloop-api-test-${++dbCount}`));
+  setDBForTests(new CodeLingoDB(`codelingo-api-test-${++dbCount}`));
   courseRepo.setCourseFetcher(apiFetch);
 });
 // Unique IP per AI call so the rate limiter doesn't interfere with unrelated tests.

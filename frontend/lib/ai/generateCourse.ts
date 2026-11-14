@@ -7,7 +7,7 @@ import { MOCK_MODEL, mockCourseFor } from "./mock";
 import { coursePrompt } from "./prompts";
 import { DraftCourseSchema, issuesOf, toGeminiSchema, type DraftCourse } from "./schemas";
 
-const AI_ORGANIZATION_ID = "learnloop-ai";
+const AI_ORGANIZATION_ID = "codelingo-ai";
 const AI_AUTHOR_ID = "nova-ai";
 
 /** Adds ids/bookkeeping to a model draft and validates it against the SAME CourseSchema as official courses. */

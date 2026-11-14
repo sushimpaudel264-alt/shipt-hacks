@@ -1,8 +1,8 @@
-# LearnLoop frontend guide
+# CodeLingo frontend guide
 
-This guide is written for AI coding tools building a LearnLoop UI. Read it fully before writing code.
+This guide is written for AI coding tools building a CodeLingo UI. Read it fully before writing code.
 
-LearnLoop is an offline-first learning app for students ages 8–16 ("Download at school. Learn anywhere.").
+CodeLingo is an offline-first learning app for students ages 8–16 ("Download at school. Learn anywhere.").
 The data layer is finished and tested. **Your job is pages and components only.**
 
 ## Rules (must follow)
@@ -10,7 +10,7 @@ The data layer is finished and tested. **Your job is pages and components only.*
 1. **Get all data through the hooks in `@/lib/hooks`.** Never write `fetch()` calls, never call `/api/*` directly, and never use `localStorage`/IndexedDB for app data.
 2. **Never create new data types.** Import them from `@/lib/types`. UI-only prop types are fine.
 3. **Never edit `app/api/**` or `lib/**`.** If something is missing, ask the backend owner.
-4. **Keep `<LearnLoopProvider>` in `app/layout.tsx`.** Every hook needs it. You may pass it an `offlinePages` prop (see [Offline pages](#offline-pages)).
+4. **Keep `<CodeLingoProvider>` in `app/layout.tsx`.** Every hook needs it. You may pass it an `offlinePages` prop (see [Offline pages](#offline-pages)).
 5. **Pages that show course data must be Client Components** (`"use client"`) that read via hooks. Server Components that fetch data break offline mode.
 6. **Handle all three states** for every query: `isPending` (loading), `error`, and empty data. Offline is a normal state, not an error. Use `useOnlineStatus().isReachable`, the `isOffline` flags, and `useSyncStatus()`.
 7. **Allowed non-hook imports:**
@@ -164,14 +164,14 @@ Suggested routes. If you use different course/lesson URLs, update the `offlinePa
 Pages open offline only if the service worker has cached them. Configure it in `app/layout.tsx`:
 
 ```tsx
-<LearnLoopProvider
+<CodeLingoProvider
   offlinePages={{
     course: ["/courses/{courseId}", "/courses/{courseId}/lessons/{lessonId}"], // cached on download
     always: ["/", "/courses", "/offline", "/profile"],                          // cached at startup
   }}
 >
   {children}
-</LearnLoopProvider>
+</CodeLingoProvider>
 ```
 
 Placeholders: `{courseId}`, `{slug}`, `{lessonId}`. The service worker only runs in production (`npm run build` then `npm start`).

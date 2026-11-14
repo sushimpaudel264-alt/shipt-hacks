@@ -1,5 +1,5 @@
 /**
- * Typed browser client for the LearnLoop API. Errors are thrown as ApiRequestError carrying the
+ * Typed browser client for the CodeLingo API. Errors are thrown as ApiRequestError carrying the
  * server's { error: { code, message, details } } so the UI can show friendly messages.
  */
 import type {

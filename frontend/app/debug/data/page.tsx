@@ -87,7 +87,7 @@ export default function DataDebugPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl space-y-4 p-4 font-mono text-sm">
-      <h1 className="text-xl font-bold">LearnLoop data layer diagnostics</h1>
+      <h1 className="text-xl font-bold">CodeLingo data layer diagnostics</h1>
 
       <section className={box}>
         <h2 className="font-bold">Connectivity &amp; sync</h2>
