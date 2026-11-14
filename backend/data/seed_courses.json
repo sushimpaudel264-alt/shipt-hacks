@@ -1,0 +1,802 @@
+[
+ {
+  "id": "web",
+  "content": {
+   "title": "HTML & CSS",
+   "icon": "🧱",
+   "thumbnail": "",
+   "subject": "coding",
+   "difficulty": "beginner",
+   "description": "Build the structure of a web page with HTML, then make it look good with CSS. Every lesson ends with a small coding activity that is checked automatically.",
+   "items": [
+    {
+     "id": "first-tag",
+     "title": "Your first HTML tag",
+     "minutes": 3,
+     "body": "Every web page is written in **HTML** (HyperText Markup Language). HTML describes *what* is on a page using **tags**.\n\nMost tags come in pairs: an opening tag like `<h1>` and a closing tag like `</h1>`. Whatever goes between them is the content. Together they form an **element**.\n\n~~~\n<h1>This is a big heading</h1>\n~~~\n\n`h1` stands for \"heading level 1\", the most important title on the page.",
+     "task": "Write an `<h1>` element that contains the text `Hello, world!`",
+     "starter": "<!-- Write your h1 element below this line -->\n\n",
+     "solution": "<h1>Hello, world!</h1>\n",
+     "hint": "Open with <h1>, write the text, then close with </h1>. Don't forget the slash in the closing tag.",
+     "checks": [
+      {
+       "label": "The page has an <h1> element",
+       "test": "!!document.querySelector('h1')"
+      },
+      {
+       "label": "The <h1> says \"Hello, world!\"",
+       "test": "document.querySelector('h1').textContent.trim() === 'Hello, world!'"
+      }
+     ],
+     "type": "code",
+     "lang": "html"
+    },
+    {
+     "id": "headings-paragraphs",
+     "title": "Headings & paragraphs",
+     "minutes": 4,
+     "body": "HTML has six heading levels, `<h1>` through `<h6>`. Use them like the outline of a document: one `<h1>` for the page title, `<h2>` for sections, `<h3>` for sub-sections.\n\nRegular text goes in **paragraphs** with the `<p>` tag:\n\n~~~\n<h1>My Blog</h1>\n<h2>Day one</h2>\n<p>Today I started learning to code.</p>\n<p>It was fun!</p>\n~~~\n\nBrowsers ignore extra spaces and line breaks in your code, so each paragraph needs its own `<p>` tag.",
+     "task": "Below the `<h1>`, add an `<h2>` section heading and at least **two** `<p>` paragraphs about anything you like.",
+     "starter": "<h1>About Me</h1>\n\n",
+     "solution": "<h1>About Me</h1>\n<h2>Hobbies</h2>\n<p>I like hiking on weekends.</p>\n<p>I am learning to code.</p>\n",
+     "hint": "Write <h2>…</h2>, then <p>…</p> twice. Each paragraph needs its own opening and closing tag.",
+     "checks": [
+      {
+       "label": "There is an <h2> with some text",
+       "test": "(document.querySelector('h2')?.textContent.trim().length || 0) > 0"
+      },
+      {
+       "label": "There are at least two <p> paragraphs",
+       "test": "document.querySelectorAll('p').length >= 2"
+      },
+      {
+       "label": "Every paragraph has text in it",
+       "test": "[...document.querySelectorAll('p')].every(p => p.textContent.trim().length > 0)"
+      }
+     ],
+     "type": "code",
+     "lang": "html"
+    },
+    {
+     "id": "links-images",
+     "title": "Links & images",
+     "minutes": 5,
+     "body": "Tags can have **attributes**: extra settings written inside the opening tag as `name=\"value\"`.\n\nA **link** uses the `<a>` (anchor) tag. Its `href` attribute says where the link goes:\n\n~~~\n<a href=\"https://developer.mozilla.org\">Read the docs</a>\n~~~\n\nAn **image** uses `<img>`. It has no closing tag, because it has no text content. `src` is the image address, and `alt` describes the image for people using screen readers (and for when the image fails to load):\n\n~~~\n<img src=\"https://picsum.photos/300/200\" alt=\"A random landscape photo\">\n~~~",
+     "task": "Add a link with an `href` and some link text, and an image with both a `src` and a non-empty `alt` description.",
+     "starter": "<h1>My favourite things</h1>\n\n",
+     "solution": "<h1>My favourite things</h1>\n<a href=\"https://en.wikipedia.org/wiki/Cat\">All about cats</a>\n<img src=\"https://picsum.photos/300/200\" alt=\"A random landscape photo\">\n",
+     "hint": "Links look like <a href=\"URL\">text</a>. Images look like <img src=\"URL\" alt=\"description\"> with no closing tag.",
+     "checks": [
+      {
+       "label": "There is a link with an href",
+       "test": "!!document.querySelector('a[href]') && document.querySelector('a[href]').getAttribute('href').trim() !== ''"
+      },
+      {
+       "label": "The link has visible text",
+       "test": "(document.querySelector('a')?.textContent.trim().length || 0) > 0"
+      },
+      {
+       "label": "There is an image with a src",
+       "test": "!!document.querySelector('img[src]') && document.querySelector('img').getAttribute('src').trim() !== ''"
+      },
+      {
+       "label": "The image has a non-empty alt description",
+       "test": "(document.querySelector('img')?.getAttribute('alt') || '').trim().length > 0"
+      }
+     ],
+     "type": "code",
+     "lang": "html"
+    },
+    {
+     "id": "lists",
+     "title": "Lists",
+     "minutes": 4,
+     "body": "There are two common kinds of list:\n\n- `<ul>` is an **unordered** list (bullet points)\n- `<ol>` is an **ordered** list (numbered)\n\nEither way, each item goes inside an `<li>` (list item):\n\n~~~\n<ul>\n  <li>Milk</li>\n  <li>Eggs</li>\n</ul>\n~~~\n\nNotice the indentation. The browser doesn't need it, but it makes **nesting** (elements inside elements) much easier for humans to read.",
+     "task": "Make a shopping list as a `<ul>` with at least **3** items, then a numbered `<ol>` with at least **2** steps for a recipe.",
+     "starter": "<h2>Shopping list</h2>\n\n\n<h2>Recipe steps</h2>\n\n",
+     "solution": "<h2>Shopping list</h2>\n<ul>\n  <li>Flour</li>\n  <li>Eggs</li>\n  <li>Milk</li>\n</ul>\n\n<h2>Recipe steps</h2>\n<ol>\n  <li>Mix everything together</li>\n  <li>Cook in a hot pan</li>\n</ol>\n",
+     "hint": "Wrap <li> items inside <ul>…</ul> for bullets and <ol>…</ol> for numbers.",
+     "checks": [
+      {
+       "label": "There is a <ul> with at least 3 <li> items",
+       "test": "[...document.querySelectorAll('ul')].some(u => u.querySelectorAll(':scope > li').length >= 3)"
+      },
+      {
+       "label": "There is an <ol> with at least 2 <li> items",
+       "test": "[...document.querySelectorAll('ol')].some(o => o.querySelectorAll(':scope > li').length >= 2)"
+      }
+     ],
+     "type": "code",
+     "lang": "html"
+    },
+    {
+     "id": "css-basics",
+     "title": "Styling with CSS",
+     "minutes": 6,
+     "body": "**CSS** (Cascading Style Sheets) controls how HTML looks. You can put CSS in a `<style>` tag.\n\nA CSS **rule** has a **selector** (which elements to style) and **declarations** (what to change):\n\n~~~\n<style>\n  p {\n    color: navy;\n    font-size: 18px;\n  }\n</style>\n~~~\n\nEach declaration is `property: value;`. Don't forget the semicolon! Colors can be names (`tomato`, `navy`), hex codes (`#ff6347`) and more.",
+     "task": "Using a `<style>` tag, make the `h1` color `tomato` and set every `p` to `font-size: 20px`.",
+     "starter": "<style>\n  /* Write your CSS rules here */\n\n</style>\n\n<h1>Styled page</h1>\n<p>CSS makes things pretty.</p>\n",
+     "solution": "<style>\n  h1 {\n    color: tomato;\n  }\n  p {\n    font-size: 20px;\n  }\n</style>\n\n<h1>Styled page</h1>\n<p>CSS makes things pretty.</p>\n",
+     "hint": "Write two rules: h1 { color: tomato; } and p { font-size: 20px; }",
+     "checks": [
+      {
+       "label": "The h1 is tomato colored",
+       "test": "getComputedStyle(document.querySelector('h1')).color === 'rgb(255, 99, 71)'"
+      },
+      {
+       "label": "Paragraphs are 20px",
+       "test": "getComputedStyle(document.querySelector('p')).fontSize === '20px'"
+      }
+     ],
+     "type": "code",
+     "lang": "html"
+    },
+    {
+     "id": "classes-box-model",
+     "title": "Classes & the box model",
+     "minutes": 7,
+     "body": "To style only *some* elements, give them a **class** and select it with a dot:\n\n~~~\n<style>\n  .card { background: #fff7e6; }\n</style>\n<div class=\"card\">I am a card</div>\n~~~\n\n`<div>` is a generic container with no meaning of its own, which makes it perfect for layout.\n\n## The box model\nEvery element is a box with layers, from the inside out:\n\n- **content**: the text or image\n- **padding**: space inside the border\n- **border**: a line around the box, e.g. `border: 2px solid black;`\n- **margin**: space outside, pushing other elements away",
+     "task": "Style the `.card` class with `padding: 16px`, a **solid** border (any width and color), and `border-radius: 8px`.",
+     "starter": "<style>\n  .card {\n\n  }\n</style>\n\n<div class=\"card\">\n  <h2>Profile</h2>\n  <p>This box should look like a card.</p>\n</div>\n",
+     "solution": "<style>\n  .card {\n    padding: 16px;\n    border: 2px solid #333;\n    border-radius: 8px;\n  }\n</style>\n\n<div class=\"card\">\n  <h2>Profile</h2>\n  <p>This box should look like a card.</p>\n</div>\n",
+     "hint": "Inside .card { } add three declarations: padding, border (width style color), and border-radius.",
+     "checks": [
+      {
+       "label": ".card has 16px padding",
+       "test": "getComputedStyle(document.querySelector('.card')).paddingTop === '16px' && getComputedStyle(document.querySelector('.card')).paddingLeft === '16px'"
+      },
+      {
+       "label": ".card has a solid border",
+       "test": "getComputedStyle(document.querySelector('.card')).borderTopStyle === 'solid' && parseFloat(getComputedStyle(document.querySelector('.card')).borderTopWidth) > 0"
+      },
+      {
+       "label": ".card has 8px rounded corners",
+       "test": "getComputedStyle(document.querySelector('.card')).borderTopLeftRadius === '8px'"
+      }
+     ],
+     "type": "code",
+     "lang": "html"
+    },
+    {
+     "id": "flexbox",
+     "title": "Layout with Flexbox",
+     "minutes": 7,
+     "body": "By default, `<div>`s stack on top of each other. **Flexbox** lines children up in a row (or column):\n\n~~~\n.row {\n  display: flex;\n  gap: 12px;\n}\n~~~\n\nUseful flex properties on the container:\n\n- `gap`: space between children\n- `justify-content`: spread along the row (`center`, `space-between`…)\n- `align-items`: line up vertically (`center`, `flex-start`…)\n\nAdd `flex: 1` to a child to make it stretch and fill the leftover space.",
+     "task": "Make `.row` a flex container with `gap: 12px`, and give `.box` `flex: 1` so the three boxes share the width equally.",
+     "starter": "<style>\n  .row {\n\n  }\n  .box {\n    padding: 20px;\n    background: #c7f0d8;\n    text-align: center;\n\n  }\n</style>\n\n<div class=\"row\">\n  <div class=\"box\">One</div>\n  <div class=\"box\">Two</div>\n  <div class=\"box\">Three</div>\n</div>\n",
+     "solution": "<style>\n  .row {\n    display: flex;\n    gap: 12px;\n  }\n  .box {\n    padding: 20px;\n    background: #c7f0d8;\n    text-align: center;\n    flex: 1;\n  }\n</style>\n\n<div class=\"row\">\n  <div class=\"box\">One</div>\n  <div class=\"box\">Two</div>\n  <div class=\"box\">Three</div>\n</div>\n",
+     "hint": "In .row add display: flex; and gap: 12px;. In .box add flex: 1;",
+     "checks": [
+      {
+       "label": ".row uses display: flex",
+       "test": "getComputedStyle(document.querySelector('.row')).display === 'flex'"
+      },
+      {
+       "label": ".row has a 12px gap",
+       "test": "getComputedStyle(document.querySelector('.row')).columnGap === '12px'"
+      },
+      {
+       "label": "The boxes sit side by side with equal widths",
+       "test": "(() => { const b = [...document.querySelectorAll('.box')].map(e => e.getBoundingClientRect()); return b.length === 3 && Math.abs(b[0].top - b[2].top) < 1 && Math.abs(b[0].width - b[2].width) < 1 && b[0].width > 0; })()"
+      }
+     ],
+     "type": "code",
+     "lang": "html"
+    },
+    {
+     "id": "checkpoint-quiz",
+     "type": "quiz",
+     "title": "Checkpoint quiz: HTML & CSS",
+     "minutes": 5,
+     "body": "Check what you've learned so far. You need **70%** to pass, and you can retry as often as you like.",
+     "questions": [
+      {
+       "prompt": "Which tag makes the largest heading?",
+       "choices": [
+        "<h6>",
+        "<h1>",
+        "<head>",
+        "<header>"
+       ],
+       "answer": 1,
+       "explanation": "<h1> is the top-level heading; <h6> is the smallest."
+      },
+      {
+       "prompt": "Which attribute sets where a link goes?",
+       "choices": [
+        "src",
+        "link",
+        "href",
+        "to"
+       ],
+       "answer": 2,
+       "explanation": "Links use href. Images use src."
+      },
+      {
+       "prompt": "In CSS, how do you select every element with class=\"card\"?",
+       "choices": [
+        "#card",
+        ".card",
+        "card",
+        "*card"
+       ],
+       "answer": 1,
+       "explanation": "A dot selects a class; a # selects an id."
+      },
+      {
+       "prompt": "Which CSS property puts children side by side in a row?",
+       "choices": [
+        "display: flex",
+        "position: row",
+        "float: all",
+        "align: horizontal"
+       ],
+       "answer": 0,
+       "explanation": "display: flex lays children out in a row by default."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "js",
+  "content": {
+   "title": "JavaScript",
+   "icon": "⚡",
+   "thumbnail": "",
+   "subject": "coding",
+   "difficulty": "intermediate",
+   "description": "Learn to program with JavaScript: variables, functions, decisions, loops and data. Write real code and see it run instantly.",
+   "items": [
+    {
+     "id": "hello-console",
+     "title": "Hello, console",
+     "minutes": 3,
+     "body": "**JavaScript** is the programming language of the web. A program is a list of instructions that the computer runs from top to bottom.\n\nThe easiest way to see what your program is doing is `console.log`, which prints a value to the console:\n\n~~~\nconsole.log(\"I am learning JavaScript\");\nconsole.log(2 + 3);\n~~~\n\nText values are called **strings** and go inside quotes. Numbers don't need quotes. Press **Run** (or **Ctrl + Enter**) to see the output.",
+     "task": "Log exactly `Hello, World!` to the console.",
+     "starter": "// Lines starting with // are comments. The computer ignores them.\n\n",
+     "solution": "console.log(\"Hello, World!\");\n",
+     "hint": "Use console.log(\"Hello, World!\"). Check the capital letters, the comma and the exclamation mark.",
+     "checks": [
+      {
+       "label": "Logs \"Hello, World!\"",
+       "test": "__logs.includes('Hello, World!')"
+      }
+     ],
+     "type": "code",
+     "lang": "js"
+    },
+    {
+     "id": "variables",
+     "title": "Variables",
+     "minutes": 5,
+     "body": "A **variable** is a named box that stores a value so you can use it later.\n\n~~~\nconst city = \"Lisbon\";   // const: can't be reassigned\nlet score = 10;          // let: can change later\nscore = score + 5;\nconsole.log(city, score); // Lisbon 15\n~~~\n\nUse `const` by default and `let` only when the value needs to change. Names are case-sensitive, so `score` and `Score` are different variables.",
+     "task": "Create a `const` called `myName` holding your name (a string), and a `let` called `age` holding a number. Then add 1 to `age` and log both variables.",
+     "starter": "// 1. Create myName with const\n\n// 2. Create age with let\n\n// 3. Add 1 to age\n\n// 4. Log them\n",
+     "solution": "const myName = \"Ada\";\nlet age = 36;\nage = age + 1;\nconsole.log(myName, age);\n",
+     "hint": "const myName = \"Ada\"; let age = 36; age = age + 1; console.log(myName, age);",
+     "checks": [
+      {
+       "label": "myName is a non-empty string",
+       "test": "typeof myName === 'string' && myName.trim().length > 0"
+      },
+      {
+       "label": "age is a number",
+       "test": "typeof age === 'number' && !isNaN(age)"
+      },
+      {
+       "label": "myName is declared with const and age with let",
+       "test": "/const\\s+myName\\b/.test(__code) && /let\\s+age\\b/.test(__code)"
+      },
+      {
+       "label": "age gets updated",
+       "test": "/age\\s*(=|\\+=|\\+\\+)|\\+\\+\\s*age/.test(__code.replace(/let\\s+age\\s*=/, ''))"
+      },
+      {
+       "label": "Something was logged",
+       "test": "__logs.length > 0"
+      }
+     ],
+     "type": "code",
+     "lang": "js"
+    },
+    {
+     "id": "strings",
+     "title": "Strings & template literals",
+     "minutes": 5,
+     "body": "You can join strings with `+`:\n\n~~~\nconst food = \"pizza\";\nconsole.log(\"I love \" + food + \"!\");\n~~~\n\nA neater way is a **template literal**: wrap the string in backticks and put variables inside `${ }`:\n\n~~~\nconsole.log(`I love ${food}!`);\n~~~\n\nStrings also have useful properties and methods, like `food.length` (5) and `food.toUpperCase()` (\"PIZZA\").",
+     "task": "Create `const firstName = \"Ada\"`. Then use a **template literal** to create `greeting` equal to `Hello, Ada!`, and log it.",
+     "starter": "const firstName = \"Ada\";\n\n",
+     "solution": "const firstName = \"Ada\";\nconst greeting = `Hello, ${firstName}!`;\nconsole.log(greeting);\n",
+     "hint": "const greeting = `Hello, ${firstName}!`;  (those are backticks, the key left of 1 on most keyboards)",
+     "checks": [
+      {
+       "label": "greeting equals \"Hello, Ada!\"",
+       "test": "greeting === 'Hello, Ada!'"
+      },
+      {
+       "label": "Uses a template literal with ${firstName}",
+       "test": "/\\$\\{\\s*firstName\\s*\\}/.test(__code)"
+      },
+      {
+       "label": "Logs the greeting",
+       "test": "__logs.includes('Hello, Ada!')"
+      }
+     ],
+     "type": "code",
+     "lang": "js"
+    },
+    {
+     "id": "functions",
+     "title": "Functions",
+     "minutes": 6,
+     "body": "A **function** is a reusable recipe. You give it inputs (**parameters**), and it can give back a result with `return`.\n\n~~~\nfunction double(n) {\n  return n * 2;\n}\n\nconsole.log(double(4));  // 8\nconsole.log(double(10)); // 20\n~~~\n\nDefining a function doesn't run it. You **call** it by writing its name followed by parentheses. Once `return` runs, the function stops.",
+     "task": "Write a function `add(a, b)` that **returns** the sum of its two parameters.",
+     "starter": "function add(a, b) {\n  // your code here\n}\n\nconsole.log(add(2, 3)); // should print 5\n",
+     "solution": "function add(a, b) {\n  return a + b;\n}\n\nconsole.log(add(2, 3)); // should print 5\n",
+     "hint": "Inside the function body, write: return a + b;",
+     "checks": [
+      {
+       "label": "add is a function",
+       "test": "typeof add === 'function'"
+      },
+      {
+       "label": "add(2, 3) returns 5",
+       "test": "add(2, 3) === 5"
+      },
+      {
+       "label": "add(-4, 10) returns 6",
+       "test": "add(-4, 10) === 6"
+      },
+      {
+       "label": "add(0.5, 0.25) returns 0.75",
+       "test": "add(0.5, 0.25) === 0.75"
+      }
+     ],
+     "type": "code",
+     "lang": "js"
+    },
+    {
+     "id": "conditionals",
+     "title": "Making decisions",
+     "minutes": 7,
+     "body": "`if` statements run code only when a condition is `true`:\n\n~~~\nfunction describe(temp) {\n  if (temp > 25) {\n    return \"hot\";\n  } else if (temp > 15) {\n    return \"nice\";\n  } else {\n    return \"cold\";\n  }\n}\n~~~\n\nComparison operators: `>` `<` `>=` `<=`, `===` (equal) and `!==` (not equal). Combine conditions with `&&` (and) or `||` (or).\n\nConditions are checked top to bottom, and the first one that's true wins.",
+     "task": "Write `grade(score)` that returns `\"A\"` for 90 and up, `\"B\"` for 80–89, `\"C\"` for 70–79, and `\"F\"` for anything lower.",
+     "starter": "function grade(score) {\n\n}\n\nconsole.log(grade(95)); // A\nconsole.log(grade(72)); // C\n",
+     "solution": "function grade(score) {\n  if (score >= 90) {\n    return \"A\";\n  } else if (score >= 80) {\n    return \"B\";\n  } else if (score >= 70) {\n    return \"C\";\n  } else {\n    return \"F\";\n  }\n}\n\nconsole.log(grade(95)); // A\nconsole.log(grade(72)); // C\n",
+     "hint": "Check the highest grade first: if (score >= 90) return \"A\"; then else if (score >= 80)…",
+     "checks": [
+      {
+       "label": "grade(95) is \"A\"",
+       "test": "grade(95) === 'A'"
+      },
+      {
+       "label": "grade(90) is \"A\" (edge case!)",
+       "test": "grade(90) === 'A'"
+      },
+      {
+       "label": "grade(85) is \"B\"",
+       "test": "grade(85) === 'B'"
+      },
+      {
+       "label": "grade(70) is \"C\"",
+       "test": "grade(70) === 'C'"
+      },
+      {
+       "label": "grade(42) is \"F\"",
+       "test": "grade(42) === 'F'"
+      }
+     ],
+     "type": "code",
+     "lang": "js"
+    },
+    {
+     "id": "loops",
+     "title": "Loops",
+     "minutes": 7,
+     "body": "Loops repeat code. The classic `for` loop has three parts: a start, a condition to keep going, and a step:\n\n~~~\nfor (let i = 1; i <= 3; i++) {\n  console.log(i);\n}\n// 1, 2, 3\n~~~\n\n`i++` means \"add 1 to i\". A common pattern is to keep a running total:\n\n~~~\nlet total = 0;\nfor (let i = 1; i <= 3; i++) {\n  total += i;   // same as total = total + i\n}\n~~~",
+     "task": "Write `sumTo(n)` that uses a loop to return the sum of all whole numbers from 1 to `n`. For example, `sumTo(4)` is 1 + 2 + 3 + 4 = 10.",
+     "starter": "function sumTo(n) {\n  let total = 0;\n\n  return total;\n}\n\nconsole.log(sumTo(4)); // 10\n",
+     "solution": "function sumTo(n) {\n  let total = 0;\n  for (let i = 1; i <= n; i++) {\n    total += i;\n  }\n  return total;\n}\n\nconsole.log(sumTo(4)); // 10\n",
+     "hint": "for (let i = 1; i <= n; i++) { total += i; }",
+     "checks": [
+      {
+       "label": "sumTo(4) returns 10",
+       "test": "sumTo(4) === 10"
+      },
+      {
+       "label": "sumTo(1) returns 1",
+       "test": "sumTo(1) === 1"
+      },
+      {
+       "label": "sumTo(0) returns 0",
+       "test": "sumTo(0) === 0"
+      },
+      {
+       "label": "sumTo(100) returns 5050",
+       "test": "sumTo(100) === 5050"
+      },
+      {
+       "label": "Uses a loop",
+       "test": "/\\b(for|while)\\s*\\(/.test(__code)"
+      }
+     ],
+     "type": "code",
+     "lang": "js"
+    },
+    {
+     "id": "arrays",
+     "title": "Arrays",
+     "minutes": 7,
+     "body": "An **array** is an ordered list of values:\n\n~~~\nconst colors = [\"red\", \"green\", \"blue\"];\nconsole.log(colors[0]);      // \"red\" (counting starts at 0!)\nconsole.log(colors.length);  // 3\ncolors.push(\"purple\");       // add to the end\n~~~\n\nUse `for...of` to loop over every item:\n\n~~~\nfor (const color of colors) {\n  console.log(color);\n}\n~~~",
+     "task": "Write `largest(nums)` that returns the biggest number in an array, **without** using `Math.max`. Assume the array has at least one number.",
+     "starter": "function largest(nums) {\n  let biggest = nums[0];\n\n  return biggest;\n}\n\nconsole.log(largest([3, 9, 2])); // 9\n",
+     "solution": "function largest(nums) {\n  let biggest = nums[0];\n  for (const n of nums) {\n    if (n > biggest) {\n      biggest = n;\n    }\n  }\n  return biggest;\n}\n\nconsole.log(largest([3, 9, 2])); // 9\n",
+     "hint": "Loop over nums. If the current number is greater than biggest, replace biggest with it.",
+     "checks": [
+      {
+       "label": "largest([3, 9, 2]) returns 9",
+       "test": "largest([3, 9, 2]) === 9"
+      },
+      {
+       "label": "largest([7]) returns 7",
+       "test": "largest([7]) === 7"
+      },
+      {
+       "label": "Works with negatives: largest([-5, -2, -9]) is -2",
+       "test": "largest([-5, -2, -9]) === -2"
+      },
+      {
+       "label": "Biggest at the end: largest([1, 2, 30]) is 30",
+       "test": "largest([1, 2, 30]) === 30"
+      },
+      {
+       "label": "Does not use Math.max",
+       "test": "!/Math\\.max/.test(__code)"
+      }
+     ],
+     "type": "code",
+     "lang": "js"
+    },
+    {
+     "id": "objects",
+     "title": "Objects",
+     "minutes": 6,
+     "body": "An **object** groups related values together under named **keys**:\n\n~~~\nconst pet = {\n  name: \"Biscuit\",\n  species: \"dog\",\n  age: 4,\n};\n\nconsole.log(pet.name);   // \"Biscuit\"\npet.age = 5;             // update a value\n~~~\n\nObjects are perfect for describing *things*: a user, a product, a book. You can pass them into functions just like any other value.",
+     "task": "Create an object `book` with keys `title` (string), `author` (string) and `pages` (number). Then write `describe(b)` that returns a string like `\"Dune by Frank Herbert\"` for any book object.",
+     "starter": "const book = {\n\n};\n\nfunction describe(b) {\n\n}\n\nconsole.log(describe(book));\n",
+     "solution": "const book = {\n  title: \"Dune\",\n  author: \"Frank Herbert\",\n  pages: 412,\n};\n\nfunction describe(b) {\n  return `${b.title} by ${b.author}`;\n}\n\nconsole.log(describe(book));\n",
+     "hint": "Use b.title and b.author inside a template literal: `${b.title} by ${b.author}`",
+     "checks": [
+      {
+       "label": "book has a string title and author",
+       "test": "typeof book.title === 'string' && book.title.length > 0 && typeof book.author === 'string' && book.author.length > 0"
+      },
+      {
+       "label": "book.pages is a number",
+       "test": "typeof book.pages === 'number'"
+      },
+      {
+       "label": "describe(book) returns \"<title> by <author>\"",
+       "test": "describe(book) === book.title + ' by ' + book.author"
+      },
+      {
+       "label": "describe works for other books too",
+       "test": "describe({ title: 'Emma', author: 'Jane Austen', pages: 400 }) === 'Emma by Jane Austen'"
+      }
+     ],
+     "type": "code",
+     "lang": "js"
+    },
+    {
+     "id": "map-filter",
+     "title": "Array methods: map & filter",
+     "minutes": 8,
+     "body": "Arrays have built-in methods that take a function and apply it to every item.\n\n`filter` keeps only the items where your function returns `true`:\n\n~~~\nconst ages = [12, 25, 17, 40];\nconst adults = ages.filter(age => age >= 18); // [25, 40]\n~~~\n\n`map` transforms every item into something new:\n\n~~~\nconst doubled = [1, 2, 3].map(n => n * 2); // [2, 4, 6]\n~~~\n\n`n => n * 2` is an **arrow function**, a short way to write a function. You can **chain** methods: `nums.filter(...).map(...)`.\n\nA number is even when `n % 2 === 0` (`%` gives the remainder after dividing).",
+     "task": "Write `evensDoubled(nums)` that keeps only the **even** numbers and then **doubles** each one. `evensDoubled([1, 2, 3, 4])` should return `[4, 8]`.",
+     "starter": "function evensDoubled(nums) {\n\n}\n\nconsole.log(evensDoubled([1, 2, 3, 4])); // [4, 8]\n",
+     "solution": "function evensDoubled(nums) {\n  return nums\n    .filter(n => n % 2 === 0)\n    .map(n => n * 2);\n}\n\nconsole.log(evensDoubled([1, 2, 3, 4])); // [4, 8]\n",
+     "hint": "return nums.filter(n => n % 2 === 0).map(n => n * 2);",
+     "checks": [
+      {
+       "label": "evensDoubled([1, 2, 3, 4]) returns [4, 8]",
+       "test": "__eq(evensDoubled([1, 2, 3, 4]), [4, 8])"
+      },
+      {
+       "label": "evensDoubled([1, 3, 5]) returns []",
+       "test": "__eq(evensDoubled([1, 3, 5]), [])"
+      },
+      {
+       "label": "evensDoubled([10, 0, -2]) returns [20, 0, -4]",
+       "test": "__eq(evensDoubled([10, 0, -2]), [20, 0, -4])"
+      },
+      {
+       "label": "Does not change the original array",
+       "test": "(() => { const a = [2, 4]; evensDoubled(a); return __eq(a, [2, 4]); })()"
+      }
+     ],
+     "type": "code",
+     "lang": "js"
+    },
+    {
+     "id": "fizzbuzz",
+     "title": "Challenge: FizzBuzz",
+     "minutes": 10,
+     "body": "Time to combine everything! **FizzBuzz** is a classic programming puzzle.\n\nFor each number from 1 to `n`:\n\n- if it's divisible by **both 3 and 5**, use `\"FizzBuzz\"`\n- otherwise, if divisible by **3**, use `\"Fizz\"`\n- otherwise, if divisible by **5**, use `\"Buzz\"`\n- otherwise, use the number itself **as a string**, e.g. `\"7\"`\n\nYou'll need a loop, `if` statements, the `%` operator, and an array with `push`. Tip: think about which check has to come first. Turn a number into a string with `String(7)`.",
+     "task": "Write `fizzbuzz(n)` that returns an **array of strings** following the rules above. `fizzbuzz(5)` is `[\"1\", \"2\", \"Fizz\", \"4\", \"Buzz\"]`.",
+     "starter": "function fizzbuzz(n) {\n  const result = [];\n\n  return result;\n}\n\nconsole.log(fizzbuzz(15));\n",
+     "solution": "function fizzbuzz(n) {\n  const result = [];\n  for (let i = 1; i <= n; i++) {\n    if (i % 15 === 0) {\n      result.push(\"FizzBuzz\");\n    } else if (i % 3 === 0) {\n      result.push(\"Fizz\");\n    } else if (i % 5 === 0) {\n      result.push(\"Buzz\");\n    } else {\n      result.push(String(i));\n    }\n  }\n  return result;\n}\n\nconsole.log(fizzbuzz(15));\n",
+     "hint": "Check \"divisible by 15\" (both 3 and 5) FIRST, otherwise 15 would be caught by the \"divisible by 3\" check.",
+     "checks": [
+      {
+       "label": "fizzbuzz(5) is [\"1\",\"2\",\"Fizz\",\"4\",\"Buzz\"]",
+       "test": "__eq(fizzbuzz(5), ['1','2','Fizz','4','Buzz'])"
+      },
+      {
+       "label": "fizzbuzz(15) ends with \"FizzBuzz\"",
+       "test": "fizzbuzz(15)[14] === 'FizzBuzz'"
+      },
+      {
+       "label": "Returns the right length",
+       "test": "fizzbuzz(30).length === 30"
+      },
+      {
+       "label": "Numbers are strings, not numbers",
+       "test": "fizzbuzz(1)[0] === '1'"
+      },
+      {
+       "label": "Position 30 is \"FizzBuzz\", 9 is \"Fizz\", 10 is \"Buzz\"",
+       "test": "(() => { const r = fizzbuzz(30); return r[29] === 'FizzBuzz' && r[8] === 'Fizz' && r[9] === 'Buzz'; })()"
+      }
+     ],
+     "type": "code",
+     "lang": "js"
+    },
+    {
+     "id": "checkpoint-quiz",
+     "type": "quiz",
+     "title": "Checkpoint quiz: JavaScript",
+     "minutes": 5,
+     "body": "Check what you've learned so far. You need **70%** to pass, and you can retry as often as you like.",
+     "questions": [
+      {
+       "prompt": "Which keyword declares a variable you can't reassign?",
+       "choices": [
+        "let",
+        "var",
+        "const",
+        "fixed"
+       ],
+       "answer": 2,
+       "explanation": "const creates a binding that can't be reassigned."
+      },
+      {
+       "prompt": "What does `[1, 2, 3].map(n => n * 2)` return?",
+       "choices": [
+        "[2, 4, 6]",
+        "6",
+        "[1, 2, 3]",
+        "12"
+       ],
+       "answer": 0,
+       "explanation": "map builds a new array by applying the function to every element."
+      },
+      {
+       "prompt": "What is `\"5\" === 5`?",
+       "choices": [
+        "true",
+        "false",
+        "an error",
+        "undefined"
+       ],
+       "answer": 1,
+       "explanation": "=== compares type too: a string is never strictly equal to a number."
+      },
+      {
+       "prompt": "Which loop is best for running code once per item in an array?",
+       "choices": [
+        "while (true)",
+        "for...of",
+        "if",
+        "switch"
+       ],
+       "answer": 1,
+       "explanation": "for...of visits each element in turn."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "fractions",
+  "content": {
+   "title": "Fractions Made Simple",
+   "description": "Understand what fractions mean, find equivalent fractions and compare them, using pizzas, rulers and everyday objects.",
+   "subject": "math",
+   "difficulty": "beginner",
+   "icon": "🍕",
+   "thumbnail": "",
+   "items": [
+    {
+     "id": "what-is-a-fraction",
+     "type": "lesson",
+     "title": "What is a fraction?",
+     "minutes": 5,
+     "body": "A **fraction** describes part of a whole. It has two numbers:\n\n- the **denominator** (bottom) says how many equal parts the whole is split into\n- the **numerator** (top) says how many of those parts you have\n\nIf a pizza is cut into 8 equal slices and you eat 3, you ate `3/8` of the pizza.\n\n## Equal parts matter\nThe parts must be the **same size**. Cutting a pizza into one huge slice and seven tiny ones does not make eighths.\n\n## Fractions on a number line\nFractions are numbers too. `1/2` sits halfway between 0 and 1, and `4/4` is exactly 1."
+    },
+    {
+     "id": "equivalent-fractions",
+     "type": "lesson",
+     "title": "Equivalent fractions",
+     "minutes": 6,
+     "body": "Different fractions can name the **same amount**. Half a pizza is `1/2`, but it is also `2/4` and `4/8`.\n\n## Making equivalent fractions\nMultiply (or divide) the top **and** bottom by the same number:\n\n~~~\n1/2 = (1×3)/(2×3) = 3/6\n6/8 = (6÷2)/(8÷2) = 3/4\n~~~\n\n## Simplest form\nA fraction is in **simplest form** when no number other than 1 divides both the top and bottom. `3/4` is simplest; `6/8` is not."
+    },
+    {
+     "id": "comparing-fractions",
+     "type": "lesson",
+     "title": "Comparing fractions",
+     "minutes": 6,
+     "body": "To compare two fractions, give them the **same denominator** first.\n\nWhich is bigger, `2/3` or `3/4`?\n\n~~~\n2/3 = 8/12\n3/4 = 9/12\n~~~\n\n`9/12` is more than `8/12`, so `3/4` is bigger.\n\n## A shortcut\nWhen the numerators are the same, the fraction with the **smaller** denominator is bigger: `1/3` is more than `1/5` because each piece is larger."
+    },
+    {
+     "id": "fraction-hunt",
+     "type": "task",
+     "title": "Activity: fraction hunt",
+     "minutes": 15,
+     "body": "Fractions are everywhere. Time to find some!\n\n- Look at a measuring cup, a ruler, a clock or a recipe.\n- Find **three** real fractions and note where you saw them.\n- For one of them, write an equivalent fraction.",
+     "task": "Write down the three fractions you found, where you found them, and one equivalent fraction."
+    },
+    {
+     "id": "fractions-quiz",
+     "type": "quiz",
+     "title": "Fractions quiz",
+     "minutes": 5,
+     "body": "Show what you know. You need **70%** to pass.",
+     "questions": [
+      {
+       "prompt": "In 3/8, what does the 8 tell you?",
+       "choices": [
+        "How many parts you have",
+        "How many equal parts make the whole",
+        "The size of the pizza",
+        "Nothing"
+       ],
+       "answer": 1,
+       "explanation": "The denominator is the number of equal parts in the whole."
+      },
+      {
+       "prompt": "Which fraction is equivalent to 1/2?",
+       "choices": [
+        "2/3",
+        "3/6",
+        "1/4",
+        "2/2"
+       ],
+       "answer": 1,
+       "explanation": "Multiply top and bottom of 1/2 by 3 to get 3/6."
+      },
+      {
+       "prompt": "What is 6/8 in simplest form?",
+       "choices": [
+        "3/4",
+        "2/3",
+        "6/8",
+        "12/16"
+       ],
+       "answer": 0,
+       "explanation": "Divide top and bottom by 2."
+      },
+      {
+       "prompt": "Which is bigger?",
+       "choices": [
+        "2/3",
+        "3/4"
+       ],
+       "answer": 1,
+       "explanation": "2/3 = 8/12 and 3/4 = 9/12, so 3/4 is bigger."
+      },
+      {
+       "prompt": "Which is bigger?",
+       "choices": [
+        "1/3",
+        "1/5"
+       ],
+       "answer": 0,
+       "explanation": "With the same numerator, the smaller denominator means bigger pieces."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "id": "solar-system",
+  "content": {
+   "title": "Our Solar System",
+   "description": "Tour the Sun, the eight planets and what makes each one special, then build a scale model of how far apart they really are.",
+   "subject": "science",
+   "difficulty": "beginner",
+   "icon": "🪐",
+   "thumbnail": "",
+   "items": [
+    {
+     "id": "the-sun",
+     "type": "lesson",
+     "title": "The Sun and its family",
+     "minutes": 5,
+     "body": "Our **solar system** is the Sun and everything that orbits it: eight planets, their moons, dwarf planets like Pluto, asteroids and comets.\n\n## The Sun\nThe Sun is a **star**, a giant ball of hot gas. It holds more than 99% of all the mass in the solar system, and its **gravity** keeps everything in orbit.\n\n## Orbits\nAn **orbit** is the path an object takes around another. Earth takes about **365 days** to orbit the Sun once: that is one year."
+    },
+    {
+     "id": "rocky-and-gas",
+     "type": "lesson",
+     "title": "Rocky planets and gas giants",
+     "minutes": 6,
+     "body": "The planets, in order from the Sun: **Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune**.\n\n## The rocky planets\nThe four inner planets are small with solid, rocky surfaces. Venus is the **hottest** planet because its thick atmosphere traps heat.\n\n## The giants\nThe four outer planets are huge and mostly gas or ice. **Jupiter** is the largest: more than 1,300 Earths would fit inside it. Saturn's famous rings are made of ice and rock.\n\n## Remember the order\nTry: *My Very Excellent Mother Just Served Us Nachos.*"
+    },
+    {
+     "id": "scale-model",
+     "type": "task",
+     "title": "Activity: build a scale model",
+     "minutes": 20,
+     "body": "Space is mostly empty. Let's see how empty!\n\nUsing **1 step = 10 million km**, the planets are roughly this many steps from the Sun:\n\n~~~\nMercury 6   Venus 11   Earth 15   Mars 23\nJupiter 78  Saturn 143  Uranus 287  Neptune 450\n~~~\n\n- Put an object outside to be the Sun.\n- Walk out and drop a marker (a stone, a note) at each planet.\n- Look back at the Sun from Neptune.",
+     "task": "Describe your model. What surprised you about the distances?"
+    },
+    {
+     "id": "solar-quiz",
+     "type": "quiz",
+     "title": "Solar system quiz",
+     "minutes": 5,
+     "body": "Test your knowledge. You need **70%** to pass.",
+     "questions": [
+      {
+       "prompt": "What keeps the planets in orbit around the Sun?",
+       "choices": [
+        "Magnetism",
+        "Gravity",
+        "Wind",
+        "Light"
+       ],
+       "answer": 1,
+       "explanation": "The Sun's gravity pulls on every planet."
+      },
+      {
+       "prompt": "Which planet is the largest?",
+       "choices": [
+        "Saturn",
+        "Earth",
+        "Jupiter",
+        "Neptune"
+       ],
+       "answer": 2,
+       "explanation": "Jupiter is the biggest planet by far."
+      },
+      {
+       "prompt": "Which planet is the hottest?",
+       "choices": [
+        "Mercury",
+        "Venus",
+        "Mars",
+        "Jupiter"
+       ],
+       "answer": 1,
+       "explanation": "Venus's thick atmosphere traps heat, making it hotter than Mercury."
+      },
+      {
+       "prompt": "About how long does Earth take to orbit the Sun?",
+       "choices": [
+        "24 hours",
+        "30 days",
+        "365 days",
+        "10 years"
+       ],
+       "answer": 2,
+       "explanation": "One orbit is one year."
+      }
+     ]
+    }
+   ]
+  }
+ }
+]

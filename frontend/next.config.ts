@@ -5,6 +5,19 @@ const nextConfig: NextConfig = {
   experimental: {
     agentFeedback: true,
   },
+  async headers() {
+    return [
+      {
+        // The service worker must never be cached, so app updates reach students.
+        source: "/sw.js",
+        headers: [
+          { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'" },
+        ],
+      },
+    ];
+  },
   turbopack: {
     rules: {
       "*.css": {
