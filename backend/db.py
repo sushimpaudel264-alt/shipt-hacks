@@ -43,6 +43,11 @@ CREATE TABLE IF NOT EXISTS courses (
     updated_at TEXT NOT NULL,
     published_at TEXT
 );
+-- Starter courses already added from data/seed_courses.json. A starter course is added
+-- once; if an administrator deletes it later, it stays deleted.
+CREATE TABLE IF NOT EXISTS seeded_courses (
+    course_id TEXT PRIMARY KEY
+);
 """
 
 # Columns added after the first release; added to existing databases on startup.
@@ -72,19 +77,28 @@ def init_db() -> None:
             if name not in existing:
                 conn.execute(f"ALTER TABLE users ADD COLUMN {name} {ddl}")
         conn.execute("UPDATE users SET display_name = username WHERE display_name = ''")
-        if not conn.execute("SELECT 1 FROM courses LIMIT 1").fetchone() and SEED_FILE.exists():
+        if SEED_FILE.exists():
             seed_courses(conn)
 
 
 def seed_courses(conn: sqlite3.Connection) -> None:
-    """Load the starter catalog as published courses (first run only)."""
+    """Add starter courses that this database hasn't had yet, as published courses.
+
+    Runs on every startup, so starter courses added to seed_courses.json later also reach
+    existing databases. Each one is added only once (tracked in seeded_courses).
+    """
     with open(SEED_FILE, encoding="utf-8") as f:
         courses = json.load(f)
+    already = {row[0] for row in conn.execute("SELECT course_id FROM seeded_courses")}
     stamp = now().isoformat()
     for course in courses:
-        data = json.dumps(course["content"], ensure_ascii=False)
-        conn.execute(
-            "INSERT INTO courses (id, draft, published, version, created_at, updated_at, published_at)"
-            " VALUES (?, ?, ?, 1, ?, ?, ?)",
-            (course["id"], data, data, stamp, stamp, stamp),
-        )
+        if course["id"] in already:
+            continue
+        if not conn.execute("SELECT 1 FROM courses WHERE id = ?", (course["id"],)).fetchone():
+            data = json.dumps(course["content"], ensure_ascii=False)
+            conn.execute(
+                "INSERT INTO courses (id, draft, published, version, created_at, updated_at, published_at)"
+                " VALUES (?, ?, ?, 1, ?, ?, ?)",
+                (course["id"], data, data, stamp, stamp, stamp),
+            )
+        conn.execute("INSERT INTO seeded_courses (course_id) VALUES (?)", (course["id"],))

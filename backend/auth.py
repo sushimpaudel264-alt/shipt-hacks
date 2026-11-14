@@ -4,8 +4,8 @@ Passwords are hashed with scrypt. Logging in returns a random session token that
 frontend sends back as "Authorization: Bearer <token>"; only its SHA-256 is stored.
 
 Roles: everyone who signs up as a Student can only study. The other titles (Teacher,
-Ed Farm Contributor, ...) are administrators who can create and publish courses; signing
-up as one requires the educator access code (EDUCATOR_ACCESS_CODE).
+Ed Farm Contributor, ...) are administrators who can create and publish courses. Anyone
+can choose an administrator role when signing up (no access code).
 
 The superuser (role 'superuser') can do everything an administrator can. It cannot be
 created by signing up: the server creates it on startup from SUPERUSER_USERNAME and
@@ -29,8 +29,6 @@ from db import connect, now
 SESSION_DAYS = 30
 STUDENT = "Student"
 ADMIN_TITLES = ["Teacher", "Ed Farm Contributor", "School Administrator", "Community Partner", "Volunteer Mentor"]
-DEFAULT_EDUCATOR_CODE = "sprout-educator"
-EDUCATOR_CODE = os.getenv("EDUCATOR_ACCESS_CODE", DEFAULT_EDUCATOR_CODE)
 SUPERUSER_TITLE = "Superuser"
 STAFF_ROLES = ("admin", "superuser")
 
@@ -43,7 +41,6 @@ class RegisterRequest(BaseModel):
     password: str = Field(min_length=8, max_length=128)
     display_name: str = Field(min_length=1, max_length=60)
     title: str = STUDENT
-    access_code: str = Field("", max_length=128)
 
 
 class LoginRequest(BaseModel):
@@ -154,8 +151,6 @@ def register(body: RegisterRequest):
     if body.title != STUDENT and body.title not in ADMIN_TITLES:
         raise HTTPException(status_code=422, detail="Unknown role")
     role = "student" if body.title == STUDENT else "admin"
-    if role == "admin" and not hmac.compare_digest(body.access_code.encode(), EDUCATOR_CODE.encode()):
-        raise HTTPException(status_code=403, detail="That educator access code is not correct")
     with closing(connect()) as conn, conn:
         try:
             cur = conn.execute(

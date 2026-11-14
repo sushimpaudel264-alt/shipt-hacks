@@ -798,5 +798,904 @@
     }
    ]
   }
+ },
+ {
+  "id": "programming-fundamentals",
+  "content": {
+   "title": "Programming Fundamentals",
+   "description": "The ideas behind every programming language: algorithms, variables, data types, decisions, loops, functions and debugging. Practise each one by writing real code.",
+   "subject": "coding",
+   "difficulty": "beginner",
+   "icon": "🧠",
+   "thumbnail": "",
+   "objectives": [
+    "Explain what a program and an algorithm are",
+    "Store and change information with variables",
+    "Make decisions with if / else and repeat work with loops",
+    "Write functions and find bugs in your own code"
+   ],
+   "items": [
+    {
+     "id": "what-is-a-program",
+     "type": "lesson",
+     "title": "What is a program?",
+     "minutes": 5,
+     "body": "A **program** is a list of instructions that a computer follows, one after another. Computers are fast, but they are not clever: they do *exactly* what you say, nothing more.\n\n## Input, process, output\nAlmost every program follows the same pattern:\n\n- **Input:** information goes in (a key press, a tap, a number)\n- **Process:** the program works with it (adds, compares, sorts)\n- **Output:** a result comes out (text on screen, a sound, a saved file)\n\nA calculator app takes two numbers as input, adds them as the process, and shows the answer as output.\n\n## Programming languages\nWe write instructions in a **programming language** such as Python, JavaScript or C++. They look different, but they share the same big ideas, and that's what this course teaches. The practice activities use JavaScript because it runs right here in your browser.",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "algorithms",
+     "type": "lesson",
+     "title": "Algorithms and pseudocode",
+     "minutes": 6,
+     "body": "An **algorithm** is a step-by-step plan to solve a problem. A recipe is an algorithm. So are the directions to your school.\n\nGood algorithms are **precise** (no guessing), **ordered** (steps happen in the right order) and **finish** (they don't go on forever).\n\n## Pseudocode\nBefore writing real code, programmers often plan with **pseudocode**: plain-language steps that look a bit like code.\n\n~~~\nSET total TO 0\nFOR EACH price IN shopping list\n    ADD price TO total\nEND FOR\nSHOW total\n~~~\n\nPseudocode has no strict rules. Its job is to make your thinking clear, so turning it into any programming language is easy.",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "unplugged-algorithm",
+     "type": "task",
+     "title": "Activity: the robot sandwich",
+     "minutes": 15,
+     "body": "Computers follow instructions literally. Let's feel what that's like!\n\n- Write an algorithm for something everyday, like making a sandwich or drawing a house.\n- Give it to a friend or family member. They must act like a robot and do **exactly** what each step says, nothing more.\n- Watch where it goes wrong, then fix your steps and try again.",
+     "task": "Write your final algorithm, then describe one step that went wrong the first time and how you fixed it.",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "variables-practice",
+     "type": "code",
+     "lang": "js",
+     "title": "Variables",
+     "minutes": 8,
+     "body": "A **variable** is a named box that stores a value. You can read it, use it and change it later.\n\n~~~\nlet player = \"Moo\";\nlet score = 0;\nscore = score + 10;\nconsole.log(player + \" has \" + score + \" points\");\n~~~\n\n`let` creates a variable. `=` puts a value into it. Text values (called **strings**) go in quotes; numbers don't.",
+     "task": "Create a variable `player` holding your name (a string) and a variable `score` holding the number `100`. Then log a sentence that uses both.",
+     "starter": "// Create your variables here\n\n",
+     "solution": "let player = \"Sam\";\nlet score = 100;\nconsole.log(player + \" scored \" + score + \" points\");\n",
+     "hint": "Use let player = \"...\"; and let score = 100; then console.log(...) with both.",
+     "checks": [
+      {
+       "label": "player is a string with your name",
+       "test": "typeof player === 'string' && player.trim().length > 0"
+      },
+      {
+       "label": "score is the number 100",
+       "test": "score === 100"
+      },
+      {
+       "label": "Logs a sentence that includes the score",
+       "test": "__logs.some(l => l.includes('100'))"
+      }
+     ],
+     "questions": []
+    },
+    {
+     "id": "data-types",
+     "type": "lesson",
+     "title": "Data types",
+     "minutes": 5,
+     "body": "Every value has a **type**, and the type decides what you can do with it.\n\n- **Number:** `42`, `3.14` (you can do math with them)\n- **String:** `\"hello\"` (text, written in quotes)\n- **Boolean:** `true` or `false` (yes / no answers)\n- **List (array):** `[\"red\", \"green\", \"blue\"]` (many values in order)\n\nTypes matter! In JavaScript, `\"5\" + 1` gives `\"51\"` because adding to a string joins text. But `5 + 1` gives `6`.\n\n## Comparisons give booleans\n~~~\n7 > 3      // true\n2 === 5    // false\n\"cat\" === \"cat\"   // true\n~~~",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "fundamentals-checkpoint",
+     "type": "quiz",
+     "title": "Checkpoint quiz",
+     "minutes": 5,
+     "body": "Check the big ideas so far. You need **70%** to pass, and you can retry as often as you like.",
+     "questions": [
+      {
+       "prompt": "What is an algorithm?",
+       "choices": [
+        "A type of computer",
+        "A step-by-step plan to solve a problem",
+        "A programming language",
+        "A kind of variable"
+       ],
+       "answer": 1,
+       "explanation": "An algorithm is a precise, ordered plan. Code is one way to write it down."
+      },
+      {
+       "prompt": "Which value is a string?",
+       "choices": [
+        "42",
+        "true",
+        "\"42\"",
+        "[4, 2]"
+       ],
+       "answer": 2,
+       "explanation": "Strings are text in quotes, even when the text is digits."
+      },
+      {
+       "prompt": "After `let x = 5; x = x + 3;` what is x?",
+       "choices": [
+        "5",
+        "3",
+        "8",
+        "53"
+       ],
+       "answer": 2,
+       "explanation": "x starts at 5, then becomes 5 + 3."
+      },
+      {
+       "prompt": "What type is the result of `10 > 4`?",
+       "choices": [
+        "Number",
+        "String",
+        "Boolean",
+        "List"
+       ],
+       "answer": 2,
+       "explanation": "Comparisons answer yes or no: true or false."
+      }
+     ],
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": []
+    },
+    {
+     "id": "decisions-practice",
+     "type": "code",
+     "lang": "js",
+     "title": "Making decisions",
+     "minutes": 8,
+     "body": "Programs choose what to do with **if / else**:\n\n~~~\nlet hour = 20;\nif (hour < 12) {\n  console.log(\"Good morning\");\n} else {\n  console.log(\"Good evening\");\n}\n~~~\n\nThe condition inside `( )` is checked. If it's `true`, the first block runs; otherwise the `else` block runs. Use `>` `<` `>=` `<=` `===` to compare.",
+     "task": "`temperature` is already set to 30. Use an `if / else` to set the variable `advice` to `\"Wear a hat\"` when the temperature is above 25, otherwise to `\"Bring a jacket\"`. Then log `advice`.",
+     "starter": "let temperature = 30;\nlet advice;\n\n// Write your if / else here\n\nconsole.log(advice);\n",
+     "solution": "let temperature = 30;\nlet advice;\n\nif (temperature > 25) {\n  advice = \"Wear a hat\";\n} else {\n  advice = \"Bring a jacket\";\n}\n\nconsole.log(advice);\n",
+     "hint": "if (temperature > 25) { advice = \"Wear a hat\"; } else { advice = \"Bring a jacket\"; }",
+     "checks": [
+      {
+       "label": "Uses an if statement",
+       "test": "/\\bif\\s*\\(/.test(__code)"
+      },
+      {
+       "label": "Uses else for the other case",
+       "test": "/\\belse\\b/.test(__code)"
+      },
+      {
+       "label": "advice is \"Wear a hat\" at 30 degrees",
+       "test": "advice === 'Wear a hat'"
+      },
+      {
+       "label": "Logs the advice",
+       "test": "__logs.includes('Wear a hat')"
+      }
+     ],
+     "questions": []
+    },
+    {
+     "id": "loops-practice",
+     "type": "code",
+     "lang": "js",
+     "title": "Loops",
+     "minutes": 8,
+     "body": "A **loop** repeats code so you don't have to write it again and again.\n\n~~~\nfor (let i = 1; i <= 3; i++) {\n  console.log(\"Lap \" + i);\n}\n~~~\n\nThis `for` loop has three parts: **start** (`let i = 1`), **keep going while** (`i <= 3`) and **step** (`i++` adds 1). It logs Lap 1, Lap 2 and Lap 3.",
+     "task": "Use a `for` loop to log the numbers **1 to 5**, one per line.",
+     "starter": "// Write a for loop here\n\n",
+     "solution": "for (let i = 1; i <= 5; i++) {\n  console.log(i);\n}\n",
+     "hint": "Start at 1, keep going while i <= 5, and log i each time.",
+     "checks": [
+      {
+       "label": "Uses a for loop",
+       "test": "/\\bfor\\s*\\(/.test(__code)"
+      },
+      {
+       "label": "Logs exactly 1, 2, 3, 4, 5",
+       "test": "__eq(__logs, ['1','2','3','4','5'])"
+      }
+     ],
+     "questions": []
+    },
+    {
+     "id": "functions-practice",
+     "type": "code",
+     "lang": "js",
+     "title": "Functions",
+     "minutes": 10,
+     "body": "A **function** is a reusable mini-program with a name. It can take **inputs** (parameters) and give back an **output** with `return`.\n\n~~~\nfunction double(n) {\n  return n * 2;\n}\nconsole.log(double(4));   // 8\n~~~\n\nA number is **even** when it divides by 2 with nothing left over. The `%` operator gives the remainder: `7 % 2` is `1`, and `8 % 2` is `0`.",
+     "task": "Write a function `isEven(n)` that returns `true` when `n` is even and `false` when it's odd.",
+     "starter": "function isEven(n) {\n  // return true or false\n}\n\nconsole.log(isEven(4));\n",
+     "solution": "function isEven(n) {\n  return n % 2 === 0;\n}\n\nconsole.log(isEven(4));\n",
+     "hint": "return n % 2 === 0;",
+     "checks": [
+      {
+       "label": "isEven(4) is true",
+       "test": "isEven(4) === true"
+      },
+      {
+       "label": "isEven(7) is false",
+       "test": "isEven(7) === false"
+      },
+      {
+       "label": "isEven(0) is true",
+       "test": "isEven(0) === true"
+      }
+     ],
+     "questions": []
+    },
+    {
+     "id": "debugging-practice",
+     "type": "code",
+     "lang": "js",
+     "title": "Debugging: find the bugs",
+     "minutes": 10,
+     "body": "A **bug** is a mistake in code. **Debugging** means finding and fixing it. Professional programmers spend lots of time doing this, so it's a skill worth practising!\n\n## A debugging routine\n- Read the error message: it often names the line\n- Use `console.log` to check what values really are\n- Change one thing at a time, then run again",
+     "task": "This program should add up the numbers in `prices` and log `Total: 15`, but it has **two bugs**. Find and fix them.",
+     "starter": "let prices = [2, 3, 4, 6];\nlet total = 0;\n\nfor (let i = 1; i < prices.length; i++) {\n  total = total + prices[i];\n}\n\nconsole.log(\"Total: \" + totl);\n",
+     "solution": "let prices = [2, 3, 4, 6];\nlet total = 0;\n\nfor (let i = 0; i < prices.length; i++) {\n  total = total + prices[i];\n}\n\nconsole.log(\"Total: \" + total);\n",
+     "hint": "Lists start counting at 0, not 1. And check the spelling of total in the last line.",
+     "checks": [
+      {
+       "label": "total is 15",
+       "test": "total === 15"
+      },
+      {
+       "label": "Logs \"Total: 15\"",
+       "test": "__logs.includes('Total: 15')"
+      }
+     ],
+     "questions": []
+    },
+    {
+     "id": "fundamentals-final",
+     "type": "quiz",
+     "title": "Final quiz",
+     "minutes": 6,
+     "body": "Show what you've learned. You need **70%** to pass, and you can retry as often as you like.",
+     "questions": [
+      {
+       "prompt": "How many times does `for (let i = 0; i < 4; i++)` repeat?",
+       "choices": [
+        "3",
+        "4",
+        "5",
+        "It never stops"
+       ],
+       "answer": 1,
+       "explanation": "i takes the values 0, 1, 2 and 3."
+      },
+      {
+       "prompt": "What does `return` do in a function?",
+       "choices": [
+        "Prints to the screen",
+        "Sends a value back to the code that called the function",
+        "Restarts the program",
+        "Creates a variable"
+       ],
+       "answer": 1,
+       "explanation": "return hands a result back; console.log only displays it."
+      },
+      {
+       "prompt": "What is `10 % 3`?",
+       "choices": [
+        "1",
+        "3",
+        "3.33",
+        "0"
+       ],
+       "answer": 0,
+       "explanation": "10 divided by 3 is 3 with 1 left over."
+      },
+      {
+       "prompt": "A program crashes with an error. What should you do first?",
+       "choices": [
+        "Delete everything",
+        "Read the error message",
+        "Restart the computer",
+        "Add more code"
+       ],
+       "answer": 1,
+       "explanation": "Error messages usually say what went wrong and on which line."
+      },
+      {
+       "prompt": "Which is the best example of input?",
+       "choices": [
+        "Text shown on screen",
+        "A player pressing a key",
+        "Saving a file",
+        "A sound playing"
+       ],
+       "answer": 1,
+       "explanation": "Input is information going into the program."
+      }
+     ],
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": []
+    }
+   ]
+  }
+ },
+ {
+  "id": "python-basics",
+  "content": {
+   "title": "Python Basics",
+   "description": "Learn Python, one of the world's most popular languages: printing, variables, strings, decisions, lists, loops and functions, with plenty of predict-the-output practice.",
+   "subject": "coding",
+   "difficulty": "beginner",
+   "icon": "🐍",
+   "thumbnail": "",
+   "objectives": [
+    "Write Python programs that print, store and combine values",
+    "Use if / elif / else and indentation correctly",
+    "Work with lists and repeat code with for and while loops",
+    "Organise code into functions with parameters and return values"
+   ],
+   "items": [
+    {
+     "id": "meet-python",
+     "type": "lesson",
+     "title": "Meet Python",
+     "minutes": 5,
+     "body": "**Python** is a programming language known for being easy to read. It's used for websites, games, science, robots and artificial intelligence.\n\nHere is a complete Python program:\n\n~~~\n# This line is a comment. Python ignores it.\nprint(\"Hello, World!\")\nprint(7 + 3)\n~~~\n\nIt prints two lines: `Hello, World!` and `10`.\n\n## How to run Python\nInstall Python from python.org (or ask an adult to), then use the editor that comes with it, called **IDLE**, or a beginner editor like **Thonny**. Both work without internet once installed. You can also do every activity in this course with pen and paper by predicting what the code will do.",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "python-variables",
+     "type": "lesson",
+     "title": "Variables and types",
+     "minutes": 6,
+     "body": "Variables store values. In Python you just pick a name and use `=`:\n\n~~~\nname = \"Ada\"\nage = 12\nheight = 1.52\nlikes_coding = True\n\nprint(name, \"is\", age)\nprint(type(height))\n~~~\n\n## The four basic types\n- `int`: whole numbers like `12`\n- `float`: decimals like `1.52`\n- `str`: text in quotes like `\"Ada\"`\n- `bool`: `True` or `False` (capital letters in Python!)\n\nVariable names can't have spaces, so Python programmers use underscores: `likes_coding`.",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "python-strings",
+     "type": "lesson",
+     "title": "Strings, f-strings and input",
+     "minutes": 6,
+     "body": "Strings are text. You can join them with `+` and repeat them with a number:\n\n~~~\ngreeting = \"Hi \" + \"there\"\nprint(greeting)        # Hi there\nprint(\"ha\" * 3)        # hahaha\nprint(len(\"Python\"))   # 6\n~~~\n\n## f-strings\nPut `f` before the quotes and you can drop variables straight into text with `{ }`:\n\n~~~\nname = \"Ada\"\nage = 12\nprint(f\"{name} is {age} years old\")\n~~~\n\n## Asking the user\n`input()` waits for the user to type something. It always gives back a **string**, so use `int()` to turn it into a number:\n\n~~~\nyear = int(input(\"What year were you born? \"))\nprint(f\"In 2030 you will be {2030 - year}\")\n~~~",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "python-predict-1",
+     "type": "quiz",
+     "title": "Predict the output",
+     "minutes": 5,
+     "body": "Read each line of code and predict what Python prints. You need **70%** to pass, and you can retry as often as you like.",
+     "questions": [
+      {
+       "prompt": "What does `print(3 + 4 * 2)` show?",
+       "choices": [
+        "14",
+        "11",
+        "10",
+        "3 + 4 * 2"
+       ],
+       "answer": 1,
+       "explanation": "Multiplication happens first: 4 × 2 = 8, then 3 + 8 = 11."
+      },
+      {
+       "prompt": "What does `print(\"3\" + \"4\")` show?",
+       "choices": [
+        "7",
+        "34",
+        "3 + 4",
+        "An error"
+       ],
+       "answer": 1,
+       "explanation": "Adding two strings joins them together."
+      },
+      {
+       "prompt": "What does `print(len(\"cow\"))` show?",
+       "choices": [
+        "3",
+        "cow",
+        "1",
+        "4"
+       ],
+       "answer": 0,
+       "explanation": "len counts the characters in a string."
+      },
+      {
+       "prompt": "name = \"Moo\" — what does `print(f\"Hi {name}!\")` show?",
+       "choices": [
+        "Hi {name}!",
+        "Hi Moo!",
+        "Hi name!",
+        "An error"
+       ],
+       "answer": 1,
+       "explanation": "An f-string swaps {name} for the variable's value."
+      },
+      {
+       "prompt": "What type does `input()` always return?",
+       "choices": [
+        "int",
+        "float",
+        "str",
+        "bool"
+       ],
+       "answer": 2,
+       "explanation": "input() gives text, so convert it with int() for math."
+      }
+     ],
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": []
+    },
+    {
+     "id": "python-if",
+     "type": "lesson",
+     "title": "Making decisions: if, elif, else",
+     "minutes": 7,
+     "body": "Python uses `if`, `elif` (else if) and `else` to choose what to do:\n\n~~~\nscore = 72\n\nif score >= 90:\n    print(\"Amazing!\")\nelif score >= 60:\n    print(\"You passed\")\nelse:\n    print(\"Keep practising\")\n~~~\n\nThis prints `You passed`. Python checks each condition from the top and runs the **first** one that's true.\n\n## Indentation matters\nIn Python, the lines that belong to an `if` must be **indented** (usually 4 spaces), and the `if` line ends with a colon `:`. Forgetting either one is the most common beginner error.\n\n## Comparisons\n~~~\n==   equal to          !=   not equal to\n>    greater than      <    less than\n>=   at least          <=   at most\n~~~\n\nCombine conditions with `and`, `or` and `not`: `if age >= 13 and age <= 19:`",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "python-lists",
+     "type": "lesson",
+     "title": "Lists",
+     "minutes": 6,
+     "body": "A **list** stores many values in order, inside square brackets:\n\n~~~\nfruits = [\"apple\", \"banana\", \"cherry\"]\nprint(fruits[0])      # apple\nprint(fruits[-1])     # cherry\nprint(len(fruits))    # 3\n\nfruits.append(\"mango\")\nfruits[1] = \"kiwi\"\nprint(fruits)         # ['apple', 'kiwi', 'cherry', 'mango']\n~~~\n\n## Counting starts at 0\nThe first item is at **index 0**, the second at index 1, and so on. Negative numbers count from the end, so `-1` is the last item.\n\nCheck whether something is in a list with `in`: `if \"apple\" in fruits:`",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "python-loops",
+     "type": "lesson",
+     "title": "Loops: for and while",
+     "minutes": 7,
+     "body": "A `for` loop goes through each item in a list, or through a range of numbers:\n\n~~~\nfor fruit in [\"apple\", \"kiwi\"]:\n    print(\"I like\", fruit)\n\nfor i in range(3):\n    print(i)        # 0, 1, 2\n\nfor i in range(1, 6):\n    print(i)        # 1, 2, 3, 4, 5\n~~~\n\n`range(3)` gives 0, 1, 2: it stops **before** the end number.\n\n## while loops\nA `while` loop repeats as long as a condition is true:\n\n~~~\ncount = 3\nwhile count > 0:\n    print(count)\n    count = count - 1\nprint(\"Lift off!\")\n~~~\n\nMake sure something changes inside the loop, or it will run forever!",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "python-functions",
+     "type": "lesson",
+     "title": "Functions",
+     "minutes": 7,
+     "body": "A **function** is a named block of code you can reuse. Create one with `def`:\n\n~~~\ndef greet(name):\n    print(f\"Hello, {name}!\")\n\ngreet(\"Ada\")\ngreet(\"Moo\")\n~~~\n\n## Returning a value\n`return` sends a result back so you can use it:\n\n~~~\ndef area(width, height):\n    return width * height\n\nroom = area(4, 3)\nprint(room)    # 12\n~~~\n\n`width` and `height` are **parameters**: the inputs a function needs. Functions keep programs tidy: write the code once, use it everywhere.",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "python-guessing-game",
+     "type": "task",
+     "title": "Activity: build a guessing game",
+     "minutes": 20,
+     "body": "Time to combine everything! Here's the plan for a number-guessing game:\n\n~~~\nimport random\nsecret = random.randint(1, 20)\nguesses = 0\n\nwhile True:\n    guess = int(input(\"Guess a number from 1 to 20: \"))\n    guesses = guesses + 1\n    if guess < secret:\n        print(\"Too low!\")\n    elif guess > secret:\n        print(\"Too high!\")\n    else:\n        print(f\"You got it in {guesses} guesses!\")\n        break\n~~~\n\n- If you have Python installed, type it in and play it. Otherwise, play it on paper with a friend acting as the computer.\n- Then **change it**: try a bigger range, a limit of 5 guesses, or a message when the guess is very close.",
+     "task": "What change did you make to the game, and how did you change the code to do it?",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "python-final",
+     "type": "quiz",
+     "title": "Python final quiz",
+     "minutes": 6,
+     "body": "Show what you know about Python. You need **70%** to pass, and you can retry as often as you like.",
+     "questions": [
+      {
+       "prompt": "What does `range(1, 4)` produce?",
+       "choices": [
+        "1, 2, 3, 4",
+        "1, 2, 3",
+        "0, 1, 2, 3",
+        "4, 3, 2, 1"
+       ],
+       "answer": 1,
+       "explanation": "range stops before the end number."
+      },
+      {
+       "prompt": "fruits = [\"a\", \"b\", \"c\"] — what is `fruits[1]`?",
+       "choices": [
+        "a",
+        "b",
+        "c",
+        "An error"
+       ],
+       "answer": 1,
+       "explanation": "Indexes start at 0, so index 1 is the second item."
+      },
+      {
+       "prompt": "Which line correctly starts an if statement?",
+       "choices": [
+        "if x > 5",
+        "if (x > 5)",
+        "if x > 5:",
+        "if x > 5 then"
+       ],
+       "answer": 2,
+       "explanation": "Python's if line ends with a colon."
+      },
+      {
+       "prompt": "What does `def` do?",
+       "choices": [
+        "Deletes a variable",
+        "Defines a function",
+        "Prints a value",
+        "Starts a loop"
+       ],
+       "answer": 1,
+       "explanation": "def creates a new function."
+      },
+      {
+       "prompt": "x = 10 — what does `print(x > 5 and x < 8)` show?",
+       "choices": [
+        "True",
+        "False",
+        "10",
+        "An error"
+       ],
+       "answer": 1,
+       "explanation": "x > 5 is True but x < 8 is False, and and needs both."
+      },
+      {
+       "prompt": "Why do lines inside an if need to be indented?",
+       "choices": [
+        "To make code pretty",
+        "Python uses indentation to know which lines belong to the if",
+        "It's optional",
+        "To make the program faster"
+       ],
+       "answer": 1,
+       "explanation": "Indentation is part of Python's grammar."
+      }
+     ],
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": []
+    }
+   ]
+  }
+ },
+ {
+  "id": "cpp-basics",
+  "content": {
+   "title": "C++ Basics",
+   "description": "Get started with C++, the fast language behind games, browsers and robots: program structure, variables and types, input, decisions, loops, functions and vectors.",
+   "subject": "coding",
+   "difficulty": "intermediate",
+   "icon": "⚙️",
+   "thumbnail": "",
+   "objectives": [
+    "Read and write the structure of a C++ program",
+    "Declare variables with the right type and use cin / cout",
+    "Control a program with if / else, for and while",
+    "Write functions and store data in vectors"
+   ],
+   "items": [
+    {
+     "id": "first-cpp-program",
+     "type": "lesson",
+     "title": "Your first C++ program",
+     "minutes": 6,
+     "body": "**C++** is a powerful, fast language used to build games, web browsers, operating systems and robots.\n\n~~~\n#include <iostream>\n\nint main() {\n    std::cout << \"Hello, World!\" << std::endl;\n    return 0;\n}\n~~~\n\n## Line by line\n- `#include <iostream>` loads the tools for input and output\n- `int main()` is where every C++ program **starts**\n- `std::cout << ...` sends text to the screen; `std::endl` ends the line\n- Every statement ends with a **semicolon** `;`\n- `return 0;` tells the computer the program finished without problems\n\n## Compiling\nC++ is a **compiled** language: a program called a compiler turns your code into an app the computer runs directly. That's why C++ is so fast. Free tools like Code::Blocks include a compiler and work offline.",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "cpp-variables",
+     "type": "lesson",
+     "title": "Variables and types",
+     "minutes": 7,
+     "body": "In C++, you must say a variable's **type** when you create it:\n\n~~~\nint lives = 3;              // whole number\ndouble speed = 2.5;         // decimal number\nchar grade = 'A';           // one character, single quotes\nbool gameOver = false;      // true or false\nstd::string name = \"Moo\";   // text (needs #include <string>)\n~~~\n\nThe type can't change later: `lives` will always hold whole numbers.\n\n## Watch out: integer division\nWhen you divide two `int`s, C++ throws away the decimal part:\n\n~~~\nstd::cout << 7 / 2;     // 3, not 3.5!\nstd::cout << 7.0 / 2;   // 3.5\nstd::cout << 7 % 2;     // 1 (the remainder)\n~~~",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "cpp-input-output",
+     "type": "lesson",
+     "title": "Input and output",
+     "minutes": 6,
+     "body": "`std::cin` reads what the user types and `>>` stores it in a variable:\n\n~~~\n#include <iostream>\n#include <string>\nusing namespace std;\n\nint main() {\n    string name;\n    int age;\n    cout << \"What's your name? \";\n    cin >> name;\n    cout << \"How old are you? \";\n    cin >> age;\n    cout << \"Hi \" << name << \", next year you'll be \" << age + 1 << endl;\n    return 0;\n}\n~~~\n\n`using namespace std;` lets you write `cout` instead of `std::cout`. It's handy in small programs.\n\nNotice the arrows: `<<` sends data **out** to the screen, `>>` brings data **in** from the keyboard.",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "cpp-checkpoint",
+     "type": "quiz",
+     "title": "Checkpoint quiz",
+     "minutes": 5,
+     "body": "Check the basics. You need **70%** to pass, and you can retry as often as you like.",
+     "questions": [
+      {
+       "prompt": "Where does every C++ program start running?",
+       "choices": [
+        "At the first line",
+        "In the main() function",
+        "At #include",
+        "At the last function"
+       ],
+       "answer": 1,
+       "explanation": "main() is the entry point."
+      },
+      {
+       "prompt": "What does `cout << 7 / 2;` print?",
+       "choices": [
+        "3.5",
+        "3",
+        "4",
+        "7/2"
+       ],
+       "answer": 1,
+       "explanation": "Dividing two ints drops the decimal part."
+      },
+      {
+       "prompt": "Which type would you use for the value 9.81?",
+       "choices": [
+        "int",
+        "char",
+        "double",
+        "bool"
+       ],
+       "answer": 2,
+       "explanation": "double holds decimal numbers."
+      },
+      {
+       "prompt": "What is missing? `int score = 10`",
+       "choices": [
+        "Nothing",
+        "A semicolon at the end",
+        "Quotes around 10",
+        "The word var"
+       ],
+       "answer": 1,
+       "explanation": "Every C++ statement ends with a semicolon."
+      },
+      {
+       "prompt": "Which operator reads input from the keyboard with cin?",
+       "choices": [
+        "<<",
+        ">>",
+        "==",
+        "->"
+       ],
+       "answer": 1,
+       "explanation": ">> brings data in; << sends it out."
+      }
+     ],
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": []
+    },
+    {
+     "id": "cpp-if",
+     "type": "lesson",
+     "title": "Decisions with if / else",
+     "minutes": 6,
+     "body": "~~~\nint temperature = 30;\n\nif (temperature > 25) {\n    cout << \"Hot day!\" << endl;\n} else if (temperature > 10) {\n    cout << \"Nice day\" << endl;\n} else {\n    cout << \"Cold day\" << endl;\n}\n~~~\n\nThe condition goes in **round brackets** and the code goes in **curly braces**. Indentation helps humans read it, but C++ uses the braces.\n\n## Comparing and combining\n~~~\n==  equal       !=  not equal\n<   less        >   greater\n<=  at most     >=  at least\n&&  and         ||  or         !  not\n~~~\n\nA classic bug: `if (x = 5)` **assigns** 5 instead of comparing. Use `==` to compare.",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "cpp-loops",
+     "type": "lesson",
+     "title": "Loops: for and while",
+     "minutes": 7,
+     "body": "~~~\nfor (int i = 1; i <= 5; i++) {\n    cout << i << \" \";\n}\n// prints: 1 2 3 4 5\n~~~\n\nA `for` loop has a **start**, a **condition** and a **step**, separated by semicolons. `i++` means add 1 to i.\n\n## while loops\n~~~\nint fuel = 3;\nwhile (fuel > 0) {\n    cout << \"Fuel left: \" << fuel << endl;\n    fuel--;\n}\ncout << \"Out of fuel!\" << endl;\n~~~\n\nUse `for` when you know how many times to repeat, and `while` when you repeat until something happens.",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "cpp-functions",
+     "type": "lesson",
+     "title": "Functions",
+     "minutes": 7,
+     "body": "A C++ function says what type it **returns**, its name, and the type of each **parameter**:\n\n~~~\nint square(int n) {\n    return n * n;\n}\n\nvoid sayHi(string name) {\n    cout << \"Hi \" << name << endl;\n}\n\nint main() {\n    cout << square(4) << endl;   // 16\n    sayHi(\"Moo\");\n    return 0;\n}\n~~~\n\n`void` means the function doesn't return anything. Functions must be written (or declared) **before** `main()` uses them.",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "cpp-vectors",
+     "type": "lesson",
+     "title": "Arrays and vectors",
+     "minutes": 7,
+     "body": "An **array** stores a fixed number of values of the same type:\n\n~~~\nint scores[3] = {90, 75, 82};\ncout << scores[0];   // 90\n~~~\n\nA **vector** is like an array that can grow. It's the one you'll use most:\n\n~~~\n#include <vector>\n\nvector<int> scores = {90, 75, 82};\nscores.push_back(100);          // add to the end\ncout << scores.size();          // 4\n\nint total = 0;\nfor (int s : scores) {\n    total += s;\n}\ncout << \"Average: \" << total / scores.size();\n~~~\n\nLike Python lists, indexes start at **0**. Reading past the end (like `scores[10]`) is a serious bug in C++, so always check the size.",
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "cpp-trace",
+     "type": "task",
+     "title": "Activity: trace the program",
+     "minutes": 15,
+     "body": "Programmers often **trace** code by hand to understand it. Grab a pencil and make a table with columns for `i` and `total`.\n\n~~~\nint total = 0;\nfor (int i = 1; i <= 4; i++) {\n    if (i % 2 == 0) {\n        total += i * 10;\n    } else {\n        total += i;\n    }\n}\ncout << total << endl;\n~~~\n\n- Write one row for each pass through the loop, showing `i` and `total` after that pass.\n- Predict what the program prints.\n- If you have a compiler, run it inside `main()` to check your answer.",
+     "task": "Write your trace table and the number you predict the program prints. Explain how the if statement changed the result.",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": [],
+     "questions": []
+    },
+    {
+     "id": "cpp-final",
+     "type": "quiz",
+     "title": "C++ final quiz",
+     "minutes": 6,
+     "body": "Show what you've learned about C++. You need **70%** to pass, and you can retry as often as you like.",
+     "questions": [
+      {
+       "prompt": "What does `void` mean before a function name?",
+       "choices": [
+        "The function is empty",
+        "The function returns nothing",
+        "The function is private",
+        "The function loops forever"
+       ],
+       "answer": 1,
+       "explanation": "void functions do work but don't return a value."
+      },
+      {
+       "prompt": "How many times does `for (int i = 0; i < 3; i++)` run?",
+       "choices": [
+        "2",
+        "3",
+        "4",
+        "Forever"
+       ],
+       "answer": 1,
+       "explanation": "i is 0, 1 and 2."
+      },
+      {
+       "prompt": "Which line adds 7 to the end of a vector v?",
+       "choices": [
+        "v.add(7);",
+        "v.push_back(7);",
+        "v[end] = 7;",
+        "v + 7;"
+       ],
+       "answer": 1,
+       "explanation": "push_back appends to a vector."
+      },
+      {
+       "prompt": "What's wrong with `if (score = 100)`?",
+       "choices": [
+        "Nothing",
+        "It assigns instead of comparing; use ==",
+        "It needs a semicolon",
+        "100 must be in quotes"
+       ],
+       "answer": 1,
+       "explanation": "= stores a value; == compares."
+      },
+      {
+       "prompt": "Why is C++ fast?",
+       "choices": [
+        "It runs in the browser",
+        "It is compiled into code the computer runs directly",
+        "It has short names",
+        "It has no types"
+       ],
+       "answer": 1,
+       "explanation": "The compiler turns C++ into machine code before it runs."
+      },
+      {
+       "prompt": "What does `cout << 10 % 4;` print?",
+       "choices": [
+        "2",
+        "2.5",
+        "4",
+        "0"
+       ],
+       "answer": 0,
+       "explanation": "10 divided by 4 is 2 with 2 left over."
+      }
+     ],
+     "task": "",
+     "lang": "js",
+     "starter": "",
+     "solution": "",
+     "hint": "",
+     "checks": []
+    }
+   ]
+  }
  }
 ]

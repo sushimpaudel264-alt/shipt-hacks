@@ -1,6 +1,6 @@
 """Loads backend/.env into the environment (real environment variables win).
 
-backend/.env holds secrets (the superuser login, the educator access code). It is
+backend/.env holds secrets (the superuser login). It is
 gitignored, so it never reaches the repository or the website; share it with your
 team through a password manager. See .env.example for the keys.
 """

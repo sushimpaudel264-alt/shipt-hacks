@@ -35,11 +35,6 @@ log = logging.getLogger("uvicorn.error")
 if problem := auth.ensure_superuser():
     log.warning(problem)
 
-if auth.EDUCATOR_CODE == auth.DEFAULT_EDUCATOR_CODE:
-    log.warning(
-        "EDUCATOR_ACCESS_CODE is not set; administrators sign up with the default code %r. "
-        "Set it before sharing this server.", auth.DEFAULT_EDUCATOR_CODE)
-
 app.include_router(auth.router)
 app.include_router(courses.router)
 app.include_router(courses.admin)

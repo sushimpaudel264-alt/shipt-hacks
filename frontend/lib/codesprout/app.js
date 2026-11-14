@@ -535,12 +535,7 @@ export function mount(root, { apiUrl }) {
           <label for="auth-name">Your name</label>
           <input id="auth-name" name="display_name" autocomplete="name" maxlength="60" required>
           <label for="auth-role">I am a…</label>
-          <select id="auth-role" name="title">${ROLE_TITLES.map((t) => `<option>${t}</option>`).join('')}</select>
-          <div id="code-field" hidden>
-            <label for="auth-code">Educator access code</label>
-            <input id="auth-code" name="access_code" autocomplete="off" maxlength="128">
-            <small>Administrators can create and publish courses. Ask your program lead for the code.</small>
-          </div>` : ''}
+          <select id="auth-role" name="title">${ROLE_TITLES.map((t) => `<option>${t}</option>`).join('')}</select>` : ''}
           <label for="auth-user">Username</label>
           <input id="auth-user" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required maxlength="32">
           ${signup ? '<small>3–32 characters: letters, numbers, <code>_</code> <code>.</code> <code>-</code></small>' : ''}
@@ -558,7 +553,6 @@ export function mount(root, { apiUrl }) {
     const submit = $('#auth-submit');
     (signup ? $('#auth-name') : $('#auth-user')).focus();
     const roleSelect = $('#auth-role'); // not form.title: that is the form's own title attribute
-    if (signup) roleSelect.addEventListener('change', () => { $('#code-field').hidden = roleSelect.value === 'Student'; });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -569,7 +563,6 @@ export function mount(root, { apiUrl }) {
         if (!form.display_name.value.trim()) { errorEl.textContent = 'Enter your name'; return; }
         if (!/^[A-Za-z0-9_.-]{3,32}$/.test(username)) { errorEl.textContent = 'Username must be 3–32 letters, numbers, _ . or -'; return; }
         if (password.length < 8) { errorEl.textContent = 'Password must be at least 8 characters'; return; }
-        if (roleSelect.value !== 'Student' && !form.access_code.value.trim()) { errorEl.textContent = 'Enter the educator access code'; return; }
       } else if (!username || !password) {
         errorEl.textContent = 'Enter your username and password'; return;
       }
@@ -577,7 +570,7 @@ export function mount(root, { apiUrl }) {
       submit.textContent = signup ? 'Creating account…' : 'Logging in…';
       try {
         const result = signup
-          ? await api.register({ username, password, display_name: form.display_name.value.trim(), title: roleSelect.value, access_code: form.access_code.value.trim() })
+          ? await api.register({ username, password, display_name: form.display_name.value.trim(), title: roleSelect.value })
           : await api.login(username, password);
         if (disposed) return;
         setSession({ token: result.token, user: result.user });
@@ -1261,7 +1254,7 @@ export function mount(root, { apiUrl }) {
             <p class="muted">${esc(u.title)} · @${esc(u.username)}</p>
             <p id="rank-line" class="rank-line"></p>
           </div>
-          <button class="btn btn-ghost" id="logout" type="button">Log out</button>
+          <button class="btn btn-logout" id="logout" type="button"><span aria-hidden="true">⏻</span> Log out</button>
         </section>
 
         <section class="stats stats-5" aria-label="Your stats">

@@ -23,18 +23,16 @@ The **Offline Center** (`#/offline`) shows downloaded courses, storage used and 
 |---|---|
 | **Student** | Log in, study, download courses, earn badges, appear in the rankings |
 | **Administrator**: Teacher, Ed Farm Contributor, School Administrator, Community Partner, Volunteer Mentor | Everything students can, plus create and edit courses, add lessons, quizzes and activities, save drafts and publish (**Manage** tab) |
-
 | **Superuser** | Everything. One built-in account for the project team; it can't be created by signing up |
 
-Anyone can sign up as a Student. Signing up with an administrator role requires the **educator access code**. Administrators and the superuser aren't ranked.
+Anyone can sign up and choose a role, including the administrator roles (there is no access code). Administrators and the superuser aren't ranked.
 
 ### Team secrets: `backend/.env`
 
-The superuser login and the educator access code live in `backend/.env`. It is **gitignored**, so it is never committed or served by the website, and other users (students and teachers) have no way to read it. Share the file with your team through a password manager, not in chat or the repo. `backend/.env.example` lists the keys.
+The superuser login lives in `backend/.env`. It is **gitignored**, so it is never committed or served by the website, and other users (students and teachers) have no way to read it. Share the file with your team through a password manager, not in chat or the repo. `backend/.env.example` lists the keys.
 
 - On startup the backend creates the superuser from `SUPERUSER_USERNAME` / `SUPERUSER_PASSWORD`. To change the password, edit `.env` and restart the backend; that also signs the superuser out everywhere.
 - The superuser username can't be taken by anyone signing up. If an existing account already has that username, the backend leaves it alone and logs a warning.
-- Without `EDUCATOR_ACCESS_CODE`, the code defaults to `sprout-educator` and the backend logs a warning.
 
 ## Courses
 
@@ -49,7 +47,9 @@ A course has a title, description, subject (Coding, Math, Science, Other), diffi
 
 Administrators edit a **draft**. Students only ever see the **published** version, so a course can be improved without disturbing students until **Publish** is pressed. Publishing checks the course is complete (titles, quiz answers, coding checks…) and lists anything missing. In the editor, **Test checks against the solution** verifies a coding activity before students see it.
 
-The first run seeds four courses (HTML & CSS, JavaScript, Fractions Made Simple, Our Solar System) from `backend/data/seed_courses.json`.
+Starter courses come from `backend/data/seed_courses.json`: Programming Fundamentals, Python Basics, C++ Basics, HTML & CSS, JavaScript, Fractions Made Simple and Our Solar System. On startup the backend adds any starter course the database hasn't had yet, so courses added to that file reach existing databases too; a starter course an administrator deletes stays deleted.
+
+Python and C++ can't run in the browser, so those courses teach with lessons, code examples, predict-the-output quizzes and hands-on activities (students can use a free editor such as Thonny or Code::Blocks if they have one). Programming Fundamentals uses JavaScript coding activities with automatic checks.
 
 ## Arcade (second playground)
 
@@ -141,7 +141,7 @@ The backend stores everything in SQLite, so host it somewhere with a persistent 
 |---|---|---|
 | GET | `/health` | Health check |
 | GET | `/api/auth/roles` | Student and administrator titles |
-| POST | `/api/auth/register` | `{username, password, display_name, title, access_code?}` → `{token, user}` |
+| POST | `/api/auth/register` | `{username, password, display_name, title}` → `{token, user}` |
 | POST | `/api/auth/login` | `{username, password}` → `{token, user}` |
 | POST | `/api/auth/logout` | End this session 🔒 |
 | GET | `/api/auth/me` | Current user 🔒 |
@@ -154,7 +154,7 @@ The backend stores everything in SQLite, so host it somewhere with a persistent 
 | POST | `/api/admin/courses/{id}/publish` | Publish the draft (new version) 🛠️ |
 | POST | `/api/admin/courses/{id}/unpublish` | Hide from students 🛠️ |
 
-Environment variables (or `backend/.env`): `SUPERUSER_USERNAME`, `SUPERUSER_PASSWORD`, `EDUCATOR_ACCESS_CODE`, `FRONTEND_URL` (extra CORS origin) and `DATABASE_PATH` on the backend; `NEXT_PUBLIC_API_URL` on the frontend.
+Environment variables (or `backend/.env`): `SUPERUSER_USERNAME`, `SUPERUSER_PASSWORD`, `FRONTEND_URL` (extra CORS origin) and `DATABASE_PATH` on the backend; `NEXT_PUBLIC_API_URL` on the frontend.
 
 ## Security notes
 
