@@ -51,7 +51,7 @@ Starter courses come from `backend/data/seed_courses.json`: Programming Fundamen
 
 Python and C++ can't run in the browser, so those courses teach with lessons, code examples, predict-the-output quizzes and hands-on activities (students can use a free editor such as Thonny or Code::Blocks if they have one). Programming Fundamentals uses JavaScript coding activities with automatic checks.
 
-## Arcade
+## Arcade (second playground)
 
 `#/arcade` has two coding games. They run in the app, work offline, and save to the learner's account (synced like other progress; the newest save wins across devices).
 

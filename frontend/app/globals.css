@@ -336,6 +336,11 @@ kbd {
 .pop { animation: pop .4s ease; }
 @keyframes pop { 0% { transform: scale(.96); opacity: 0; } 60% { transform: scale(1.02); } 100% { transform: scale(1); opacity: 1; } }
 
+/* ---------- Playground ---------- */
+.playground { display: grid; grid-template-columns: 1fr 1fr; height: calc(100vh - 57px); }
+.playground .workspace { border-right: 1px solid var(--border); }
+.playground .output { border-top: 0; }
+
 /* ---------- Toasts ---------- */
 .toasts {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 50;
@@ -361,10 +366,11 @@ kbd {
 @media (max-width: 760px) {
   .topbar { padding: 10px 16px; }
   .home { padding: 36px 16px 60px; }
-  .lesson-page { display: block; height: auto; }
+  .lesson-page, .playground { display: block; height: auto; }
   .instructions { padding: 20px 16px 24px; border-right: 0; border-bottom: 1px solid var(--border); }
   .editor { min-height: 300px; }
   .output { min-height: 320px; }
+  .playground .editor { min-height: 360px; }
   .nav a { padding: 6px 8px; font-size: .9rem; }
   .stats { gap: 10px; }
   .stat b { font-size: 1.4rem; }

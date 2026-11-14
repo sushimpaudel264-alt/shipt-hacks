@@ -347,6 +347,7 @@ export function mount(root, { apiUrl }) {
         link('home', '#/', '📚', 'Courses'),
         link('offline', '#/offline', '📥', 'Offline'),
         link('leaderboard', '#/leaderboard', '🏆', 'Rankings'),
+        link('playground', '#/playground', '🧪', 'Playground'),
         link('arcade', '#/arcade', '🎮', 'Arcade'),
         isAdmin() ? link('admin', '#/admin', '🛠️', 'Manage') : '',
       ].join('');
@@ -418,6 +419,7 @@ export function mount(root, { apiUrl }) {
     if (a === 'offline') return { name: 'offline', nav: 'offline', params: {} };
     if (a === 'profile') return { name: 'profile', nav: 'profile', params: {} };
     if (a === 'leaderboard') return { name: 'leaderboard', nav: 'leaderboard', params: {} };
+    if (a === 'playground') return { name: 'playground', nav: 'playground', params: {} };
     if (a === 'arcade') return GAMES[b] ? { name: 'game', nav: 'arcade', params: { id: b } } : { name: 'arcade', nav: 'arcade', params: {} };
     if (a === 'admin' && isAdmin()) {
       if (b === 'new') return { name: 'admin-edit', nav: 'admin', params: { id: null } };
@@ -444,6 +446,7 @@ export function mount(root, { apiUrl }) {
       case 'offline': renderOffline(); break;
       case 'profile': renderProfile(); break;
       case 'leaderboard': renderLeaderboard(); break;
+      case 'playground': renderPlayground(); break;
       case 'arcade': renderArcade(); break;
       case 'game': renderGame(p.id); break;
       case 'admin': renderAdminList(adminCtx()); break;
@@ -1471,10 +1474,11 @@ export function mount(root, { apiUrl }) {
       <div class="page arcade">
         <div class="page-head">
           <div>
-            <span class="eyebrow">Coding games</span>
+            <span class="eyebrow">Second playground</span>
             <h1>Arcade</h1>
             <p class="muted">Learn to code by playing. Both games work offline, and your progress saves to your account.</p>
           </div>
+          <a class="btn" href="#/playground">🧪 Code Playground</a>
         </div>
         <section class="game-grid">
           ${Object.entries(GAMES).map(([id, g]) => {
@@ -1510,6 +1514,104 @@ export function mount(root, { apiUrl }) {
     const frame = $('.game-frame', app);
     frame.addEventListener('load', () => frame.focus());
     teardown = flushGameSync;
+  }
+
+  /* ================= Playground ================= */
+  const PLAY_DEFAULTS = {
+    web: [
+      '<!doctype html>', '<html>', '<head>', '  <style>',
+      '    body { font-family: system-ui, sans-serif; padding: 24px; }',
+      '    button { font-size: 18px; padding: 8px 16px; border-radius: 8px; }',
+      '  </style>', '</head>', '<body>', '  <h1>My playground</h1>',
+      '  <button id="btn">Clicked 0 times</button>', '', '  <script>', '    let count = 0;',
+      '    const btn = document.getElementById("btn");', '    btn.addEventListener("click", () => {',
+      '      count++;', '      btn.textContent = "Clicked " + count + " times";',
+      '      console.log("count is", count);', '    });', '  </script>', '</body>', '</html>', '',
+    ].join('\n'),
+    js: [
+      '// Experiment freely! Press Run (Ctrl + Enter).', 'const fruits = ["apple", "banana", "cherry"];', '',
+      'for (const fruit of fruits) {', '  console.log(fruit.toUpperCase());', '}', '',
+      'console.log({ total: fruits.length, first: fruits[0] });', '',
+    ].join('\n'),
+  };
+
+  function renderPlayground() {
+    document.title = 'Playground · Codelingo';
+    let mode = store.play.mode === 'js' ? 'js' : 'web';
+    app.innerHTML = `
+      <div class="playground">
+        <section class="workspace" aria-label="Playground editor">
+          <div class="toolbar">
+            <div class="seg" role="group" aria-label="Language">
+              <button type="button" data-mode="web">HTML / CSS / JS</button>
+              <button type="button" data-mode="js">JavaScript only</button>
+            </div>
+            <span class="spacer"></span>
+            <button class="btn btn-ghost" id="pg-reset" type="button">Reset</button>
+            <button class="btn btn-primary" id="pg-run" type="button">▶ Run <kbd>Ctrl ↵</kbd></button>
+          </div>
+          <div id="pg-editor"></div>
+        </section>
+        <section class="output" aria-label="Output">
+          <div class="output-tabs" role="tablist">
+            <button role="tab" data-tab="preview" aria-selected="true">Preview</button>
+            <button role="tab" data-tab="console" aria-selected="false">Console <span class="badge" id="pg-count">0</span></button>
+          </div>
+          <div class="panel" data-panel="preview"><iframe class="preview-frame" title="Playground preview" sandbox="allow-scripts allow-modals"></iframe></div>
+          <div class="panel is-hidden" data-panel="console" id="pg-console"></div>
+        </section>
+      </div>`;
+
+    const frame = $('.preview-frame');
+    const cons = consoleView($('#pg-console'));
+    const countBadge = $('#pg-count');
+    const previewTab = $('[data-tab="preview"]');
+    const selectTab = tabs($('.playground .output'));
+    cons.clear();
+    const log = (level, text) => { cons.log(level, text); countBadge.textContent = String(cons.count); };
+
+    const persist = debounce((v) => { store.play[mode] = v; persistLearner(); }, 400);
+    const run = async () => {
+      cons.clear();
+      countBadge.textContent = '0';
+      if (mode === 'web') {
+        runners.runWeb(frame, editor.value, null, log);
+      } else {
+        selectTab('console');
+        await runners.runJS(editor.value, null, log);
+        if (!cons.count) cons.clear('Your code ran, but nothing was logged.');
+      }
+    };
+    // Saved code, or the example when nothing (or only blank space) is saved.
+    const savedOrExample = (m) => (store.play[m] && store.play[m].trim() ? store.play[m] : PLAY_DEFAULTS[m]);
+    const editor = createEditor($('#pg-editor'), {
+      value: savedOrExample(mode),
+      label: 'Playground code editor. Press Escape then Tab to move focus out.',
+      onChange: (v) => persist(v),
+      onRun: run,
+    });
+    const setMode = (m) => {
+      persist.cancel();
+      store.play[mode] = editor.value;
+      mode = m;
+      store.play.mode = m;
+      persistLearner();
+      $$('[data-mode]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.mode === m));
+      previewTab.hidden = m === 'js';
+      selectTab(m === 'js' ? 'console' : 'preview');
+      editor.value = savedOrExample(m);
+      if (m === 'js') { frame.srcdoc = ''; cons.clear('Press Run to execute your code.'); countBadge.textContent = '0'; }
+    };
+    $$('[data-mode]').forEach((b) => b.addEventListener('click', () => { if (b.dataset.mode !== mode) setMode(b.dataset.mode); }));
+    $('#pg-run').addEventListener('click', run);
+    $('#pg-reset').addEventListener('click', () => {
+      if (!confirm('Reset the playground to the example code?')) return;
+      editor.value = PLAY_DEFAULTS[mode];
+      if (mode === 'js') run();
+    });
+    setMode(mode);
+    if (mode === 'web') run();
+    teardown = () => { persist.cancel(); store.play[mode] = editor.value; persistLearner(); };
   }
 
   /* ================= Boot ================= */
