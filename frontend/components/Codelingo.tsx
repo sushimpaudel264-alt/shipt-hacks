@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { mount } from "@/lib/codesprout/app";
 
 /**
- * Mounts the Codelingo learning app (lessons, editor, code runners, playground).
+ * Mounts the Codelingo learning app (lessons, editor, code runners, and Arcade).
  * All data comes from the FastAPI backend at NEXT_PUBLIC_API_URL.
  */
 export default function Codelingo() {
