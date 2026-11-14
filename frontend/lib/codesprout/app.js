@@ -434,13 +434,32 @@ export function mount(root, { apiUrl }) {
     if (!keepScroll) window.scrollTo(0, 0);
   }
 
+  /**
+   * Smooth screen changes: the View Transitions API crossfades the old and new screen (the top bar
+   * stays put, see globals.css). Falls back to an instant swap when unsupported or when the user
+   * prefers reduced motion. Purely visual: the render itself runs exactly as before.
+   */
+  function smoothly(render) {
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (!document.startViewTransition || reduce || document.hidden) { render(); return; }
+    const t = document.startViewTransition(render);
+    // The browser may skip a transition (e.g. the viewport resized); the render still runs, so
+    // swallow the rejection instead of reporting it as an error.
+    t.ready.catch(() => {});
+    t.finished.catch(() => {});
+  }
+
   /** Re-render passive pages after data changes, keeping the scroll position. */
   function refreshView() {
     if (disposed || !current) return;
     if (['home', 'course', 'offline', 'profile', 'arcade', 'landing'].includes(current.name)) {
-      const y = window.scrollY;
-      route({ keepScroll: true });
-      window.scrollTo(0, y);
+      const rerender = () => {
+        const y = window.scrollY;
+        route({ keepScroll: true });
+        window.scrollTo(0, y);
+      };
+      // Offline Center: let real sync/download state changes crossfade instead of jumping.
+      if (current.name === 'offline') smoothly(rerender); else rerender();
     }
   }
 
@@ -449,7 +468,7 @@ export function mount(root, { apiUrl }) {
       history.replaceState(null, '', currentHash || '#/');
       return;
     }
-    route();
+    smoothly(() => route());
   });
   on(window, 'beforeunload', (e) => { if (leaveGuard?.()) e.preventDefault(); });
 

@@ -129,6 +129,14 @@ describe("API, downloads, progress and sync", () => {
     expect(await api.logout()).toEqual({});
   });
 
+  it("fills every leaderboard column from real data (no undefined fields)", async () => {
+    await bridge.downloads.save({ id: "code-adventure" });
+    await bridge.completeLesson("code-adventure", bridge.toUiCourse(codeAdventure).items[0]);
+    const board = await bridge.createBackendApi().leaderboard();
+    expect(board.all_time[0]).toEqual({ rank: 1, name: "Jordan", xp: 105, week_xp: 105, is_me: true, streak: 4, lessons: 1, badges: 3 });
+    expect(board.students).toBe(1);
+  });
+
   it("uses the data layer's badge catalog and the demo student", async () => {
     expect(bridge.BADGES).toHaveLength(8);
     expect(bridge.BADGES[0]).toEqual({ id: "first-lesson", icon: "🌱", name: "First Lesson", desc: "Finished your very first lesson!" });

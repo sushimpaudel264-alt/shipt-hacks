@@ -124,7 +124,11 @@ export function createBackendApi() {
     /** Rankings: the data layer has a single demo student, so only that student is listed. */
     async leaderboard() {
       const s = await studentRepo.getStudent();
-      const row = { rank: 1, name: s.name, xp: s.xp, week_xp: s.xp, is_me: true };
+      const lessons = (await progressRepo.getAllProgress()).filter((p) => p.status === 'completed').length;
+      const row = {
+        rank: 1, name: s.name, xp: s.xp, week_xp: s.xp, is_me: true,
+        streak: s.streak.current, lessons, badges: s.achievements.length,
+      };
       return { all_time: [row], this_week: [row], students: 1 };
     },
     async resetProgress() {
