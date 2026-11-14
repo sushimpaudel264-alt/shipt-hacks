@@ -1186,7 +1186,7 @@ export function mount(root, { apiUrl }) {
       const el = $('#app-files');
       if (!el || ocGen !== generation) return;
       const line = {
-        ready: ['✓', 'is-ok', `App saved for offline use: CodeLingo and both Arcade games open with no internet (${st.files} files).`],
+        ready: ['✓', 'is-ok', `App saved for offline use: CodeLingo and all Arcade games open with no internet (${st.files} files).`],
         preparing: ['…', '', 'Saving the app for offline use. Keep this page open for a moment while you\'re connected.'],
         dev: ['i', '', 'Offline app saving runs in the deployed app (npm run build / Vercel), not in npm run dev.'],
         unsupported: ['!', 'is-warn', 'This browser can\'t save the app for offline use. Try Chrome, Edge or Safari.'],
@@ -1438,6 +1438,12 @@ export function mount(root, { apiUrl }) {
       skills: ['Function calls', 'For loops', '2D grids'],
       stats: (s) => [`Farm level ${Math.floor((Number(s.xp) || 0) / 200) + 1}`, `🪙 ${s.coins ?? 120}`, `🧺 ${s.stats?.harvested || 0} harvested`],
     },
+    cafe: {
+      title: 'Code Café', icon: '☕', file: '/games/code-cafe.html', hue: 340, lang: 'Python-style',
+      blurb: "Run Moo's cozy café: write code that brews milk, smoothies and lattes for your customers.",
+      skills: ['Sequences', 'Loops', 'Conditionals'],
+      stats: (s) => [`${Array.isArray(s.wins) ? s.wins.length : 0} of 5 recipes`, `🪙 ${s.coins || 0}`, `⭐ ${s.xp || 0} XP`],
+    },
   };
   const gameKey = (id) => `codelingo-game:${id}:${session.user.username.toLowerCase()}`;
   const playKey = (id) => `game:${id}`;
@@ -1486,7 +1492,7 @@ export function mount(root, { apiUrl }) {
           <div>
             <span class="eyebrow">Second playground</span>
             <h1>Arcade</h1>
-            <p class="muted">Learn to code by playing. Both games work offline, and your progress saves to your account.</p>
+            <p class="muted">Learn to code by playing. Every game works offline, and your progress saves to your account.</p>
           </div>
           <a class="btn" href="#/playground">🧪 Code Playground</a>
         </div>
