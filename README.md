@@ -1,31 +1,20 @@
 # shipt-hacks
 
-FastAPI backend + Next.js frontend.
+LearnLoop: a Next.js app whose API lives in its own route handlers (`frontend/app/api`).
+The frontend calls them with relative paths (`/api/courses`, `/api/health`, ...), so there is no separate API URL to configure.
 
-## Backend (terminal 1)
-
-```powershell
-cd backend
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-uvicorn main:app --reload --port 8000
-```
-
-Check it: http://localhost:8000/health
-
-> If activation is blocked, run once: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
-
-## Frontend (terminal 2)
+## Run it
 
 ```powershell
 cd frontend
 npm install
-"NEXT_PUBLIC_API_URL=http://localhost:8000" | Set-Content -Encoding ascii .env.local   # first time only
+Copy-Item .env.example .env.local   # first time only; mock AI works without a Gemini key
 npm run dev
 ```
 
-Open http://localhost:3000. It should say **Backend: ok**.
+Open http://localhost:3000. It should say **Backend: ok** (it checks http://localhost:3000/api/health).
+
+> If PowerShell blocks scripts, run once: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
 
 ## LearnLoop data layer
 
@@ -34,7 +23,18 @@ See **[frontend/BACKEND.md](frontend/BACKEND.md)** for hooks, API contracts, the
 
 ```powershell
 cd frontend
-Copy-Item .env.example .env.local   # mock AI works without a Gemini key
 npm test                             # unit + offline/sync integration tests
 npm run build; npx next start        # production mode (service worker enabled)
+```
+
+## Optional: FastAPI service (`backend/`)
+
+The original FastAPI skeleton is not used by the app. Keep it only if you need a Python service later.
+
+```powershell
+cd backend
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000   # http://localhost:8000/health
 ```

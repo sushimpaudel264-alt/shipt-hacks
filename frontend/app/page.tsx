@@ -6,9 +6,10 @@ export default function Home() {
   const [status, setStatus] = useState<"checking" | "ok" | "down">("checking");
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`)
+    // Same-origin Next.js route (frontend/app/api/health); returns { ok: true, time }.
+    fetch("/api/health", { cache: "no-store" })
       .then((res) => res.json())
-      .then((data) => setStatus(data.status === "ok" ? "ok" : "down"))
+      .then((data) => setStatus(data.ok === true ? "ok" : "down"))
       .catch(() => setStatus("down"));
   }, []);
 
