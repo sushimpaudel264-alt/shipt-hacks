@@ -1,125 +1,179 @@
-/* CodeLingo service worker (hand-written, no build step).
- *
- * Course CONTENT is NOT cached here: it lives in IndexedDB (Dexie). This worker only makes the
- * app shell load offline:
- *   - navigations:            NetworkFirst → cached page → /offline fallback
- *   - RSC payloads:           NetworkFirst → cache (so soft navigations to visited pages work)
- *   - /_next/static/*:        CacheFirst (content-hashed, immutable)
- *   - GET /api/courses:       NetworkFirst (catalog list)
- *   - /api/ai/*, /api/sync, /api/health, packages, versions, contributor: NetworkOnly (not touched)
- *   - other same-origin GETs: StaleWhileRevalidate (icons, fonts, images)
- * Bump VERSION to invalidate old caches on deploy.
- */
-const VERSION = "v1";
-const SHELL_CACHE = `codelingo-shell-${VERSION}`;
-const RUNTIME_CACHE = `codelingo-runtime-${VERSION}`;
-const STATIC_CACHE = `codelingo-static-${VERSION}`;
-const OFFLINE_URL = "/offline";
-const PRECACHE = ["/", OFFLINE_URL, "/manifest.webmanifest"];
-const SYNC_TAG = "codelingo-sync";
+// CodeLingo service worker: makes the whole app work offline.
+//
+// On install it saves the app page, every script/style that page uses (their names are
+// hashed per build, so they are read from the page itself), both Arcade games, the fonts
+// and the icons. A single online visit is therefore enough to use CodeLingo offline.
+//
+// Course content and progress are not handled here: they live in IndexedDB and
+// localStorage (see lib/codesprout/offline.js).
+const VERSION = 'v2';
+const CACHE = `codelingo-app-${VERSION}`;
+const CORE = [
+  '/',
+  '/manifest.webmanifest',
+  '/games/code-dungeon.html',
+  '/games/pixel-farm.html',
+  '/fonts/fonts.css',
+  '/fonts/dm-sans.woff2',
+  '/fonts/space-grotesk.woff2',
+  '/fonts/jetbrains-mono.woff2',
+  '/fonts/nunito.woff2',
+  '/fonts/fredoka.woff2',
+  '/logo-96.png',
+  '/logo-192.png',
+  '/logo-512.png',
+  '/apple-touch-icon.png',
+];
+const CORE_PATHS = new Set(CORE);
+const NETWORK_TIMEOUT = 4000;
+const STATIC_RE = /\/_next\/static\/[^"'\s)\\]+/g;
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches
-      .open(SHELL_CACHE)
-      // Individually, so one 404 doesn't abort the whole install.
-      .then((cache) => Promise.all(PRECACHE.map((url) => cache.add(url).catch(() => undefined))))
-      .then(() => self.skipWaiting()),
-  );
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+  event.waitUntil(precache());
 });
 
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches
-      .keys()
-      .then((keys) => Promise.all(keys.filter((k) => k.startsWith("codelingo-") && !k.endsWith(VERSION)).map((k) => caches.delete(k))))
-      .then(() => self.clients.claim()),
-  );
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    for (const key of await caches.keys()) {
+      if (key !== CACHE && /^(codelingo|codesprout)-/.test(key)) await caches.delete(key);
+    }
+    await self.clients.claim();
+  })());
 });
 
-const NETWORK_ONLY = [/^\/api\/ai\//, /^\/api\/sync/, /^\/api\/health/, /^\/api\/contributor\//, /^\/api\/courses\/versions/, /^\/api\/courses\/[^/]+\/package/];
+// The page can ask for extra files it loaded to be saved (see offline.js).
+self.addEventListener('message', (event) => {
+  if ((event.data?.type === 'CACHE_URLS' || event.data?.type === 'CODELINGO_CACHE_URLS') && Array.isArray(event.data.urls)) {
+    event.waitUntil((async () => {
+      const cache = await caches.open(CACHE);
+      await Promise.all(event.data.urls
+        .filter((u) => new URL(u, self.location.origin).origin === self.location.origin)
+        .map((u) => cache.match(u).then((hit) => hit || cache.add(u)).catch(() => {})));
+    })());
+  }
+});
 
-async function networkFirst(request, cacheName, fallback) {
-  const cache = await caches.open(cacheName);
+// Background Sync (CodeLingo sync engine, lib/sync): wake open tabs so they flush the sync queue.
+self.addEventListener('sync', (event) => {
+  if (event.tag !== 'codelingo-sync') return;
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+    .then((clients) => clients.forEach((c) => c.postMessage({ type: 'CODELINGO_SYNC_REQUESTED' }))));
+});
+
+async function precache() {
+  const cache = await caches.open(CACHE);
+  await Promise.all(CORE.map((url) => cache.add(new Request(url, { cache: 'reload' })).catch(() => {})));
+  await cacheAppAssets(cache);
+}
+
+/** Save every /_next/static file the cached app page (and its CSS) refers to; drop old builds' files. */
+async function cacheAppAssets(cache) {
+  const page = await cache.match('/');
+  if (!page) return;
+  const keep = new Set((await page.text()).match(STATIC_RE) || []);
+  await Promise.all([...keep].map((u) => cache.match(u).then((hit) => hit || cache.add(u)).catch(() => {})));
+  for (const u of [...keep]) {
+    if (!u.endsWith('.css')) continue;
+    const css = await cache.match(u);
+    if (!css) continue;
+    for (const ref of (await css.text()).match(STATIC_RE) || []) {
+      keep.add(ref);
+      await cache.match(ref).then((hit) => hit || cache.add(ref)).catch(() => {});
+    }
+  }
+  for (const req of await cache.keys()) {
+    const path = new URL(req.url).pathname;
+    if (path.startsWith('/_next/static/') && !keep.has(path)) await cache.delete(req);
+  }
+}
+
+function withTimeout(promise, ms) {
+  return new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error('timeout')), ms);
+    promise.then((v) => { clearTimeout(t); resolve(v); }, (e) => { clearTimeout(t); reject(e); });
+  });
+}
+
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return; // anything external: not cached here
+  // CodeLingo API: always network-only. Course content lives in IndexedDB, and /api/health must
+  // never be answered from a cache (the sync engine uses it to detect real connectivity).
+  if (url.pathname.startsWith('/api/')) return;
+  if (url.pathname.startsWith('/_next/webpack-hmr') || url.pathname.includes('__nextjs')) return;
+
+  if (req.mode === 'navigate') event.respondWith(navigate(event, url));
+  else if (url.pathname.startsWith('/_next/static/')) event.respondWith(cacheFirst(req));
+  else if (CORE_PATHS.has(url.pathname)) event.respondWith(staleWhileRevalidate(event, req, url.pathname));
+  else event.respondWith(networkFirst(req));
+});
+
+/** Pages (the app and the games): fresh from the network, the saved copy if offline or slow. */
+async function navigate(event, url) {
+  const cache = await caches.open(CACHE);
+  const key = url.pathname === '/' || url.pathname === '/index.html' ? '/' : url.pathname;
+  const network = fetch(event.request).then((res) => {
+    if (res.ok && res.type === 'basic') {
+      const copy = res.clone();
+      event.waitUntil(cache.put(key, copy).then(() => (key === '/' ? cacheAppAssets(cache) : null)));
+    }
+    return res;
+  });
   try {
-    const response = await fetch(request);
-    if (response.ok) cache.put(request, response.clone());
-    return response;
+    return await withTimeout(network, NETWORK_TIMEOUT);
   } catch {
-    const cached = (await cache.match(request)) || (await caches.match(request, { ignoreSearch: true }));
-    if (cached) return cached;
-    if (fallback) return fallback();
-    return Response.error();
+    const saved = (await cache.match(key)) || (key === '/' ? null : await cache.match(key, { ignoreSearch: true }));
+    if (saved) return saved;
+    if (!key.startsWith('/games/')) {
+      const shell = await cache.match('/');
+      if (shell) return shell; // the app routes with #hashes, so any page can start from the shell
+    }
+    try { return await network; } catch { return offlinePage(); }
   }
 }
 
-async function cacheFirst(request) {
-  const cached = await caches.match(request);
-  if (cached) return cached;
-  const response = await fetch(request);
-  if (response.ok) (await caches.open(STATIC_CACHE)).put(request, response.clone());
-  return response;
+async function cacheFirst(req) {
+  const cache = await caches.open(CACHE);
+  const hit = await cache.match(req);
+  if (hit) return hit;
+  const res = await fetch(req);
+  if (res.ok) cache.put(req, res.clone()).catch(() => {});
+  return res;
 }
 
-async function staleWhileRevalidate(request) {
-  const cache = await caches.open(RUNTIME_CACHE);
-  const cached = await cache.match(request);
-  const network = fetch(request)
-    .then((response) => {
-      if (response.ok) cache.put(request, response.clone());
-      return response;
-    })
-    .catch(() => cached || Response.error());
-  return cached || network;
+async function staleWhileRevalidate(event, req, path) {
+  const cache = await caches.open(CACHE);
+  const hit = await cache.match(path);
+  const update = fetch(req).then((res) => {
+    if (res.ok) cache.put(path, res.clone()).catch(() => {});
+    return res;
+  });
+  if (hit) {
+    event.waitUntil(update.catch(() => {}));
+    return hit;
+  }
+  return update;
 }
 
-self.addEventListener("fetch", (event) => {
-  const { request } = event;
-  if (request.method !== "GET") return;
-  const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return;
-  if (NETWORK_ONLY.some((re) => re.test(url.pathname))) return;
+async function networkFirst(req) {
+  const cache = await caches.open(CACHE);
+  try {
+    const res = await fetch(req);
+    if (res.ok && res.type === 'basic') cache.put(req, res.clone()).catch(() => {});
+    return res;
+  } catch {
+    return (await cache.match(req)) || Response.error();
+  }
+}
 
-  if (request.mode === "navigate") {
-    event.respondWith(
-      networkFirst(request, RUNTIME_CACHE, async () => (await caches.match(OFFLINE_URL)) || new Response("Offline", { status: 503 })),
-    );
-    return;
-  }
-  if (request.headers.get("RSC") === "1" || url.searchParams.has("_rsc")) {
-    event.respondWith(networkFirst(request, RUNTIME_CACHE));
-    return;
-  }
-  if (url.pathname.startsWith("/_next/static/")) {
-    event.respondWith(cacheFirst(request));
-    return;
-  }
-  if (url.pathname === "/api/courses") {
-    event.respondWith(networkFirst(request, RUNTIME_CACHE));
-    return;
-  }
-  if (url.pathname.startsWith("/api/")) return;
-  event.respondWith(staleWhileRevalidate(request));
-});
-
-// Pre-warm pages (e.g. a course's player route right after it's downloaded) so they open offline.
-self.addEventListener("message", (event) => {
-  const data = event.data || {};
-  if (data.type === "CODELINGO_CACHE_URLS" && Array.isArray(data.urls)) {
-    event.waitUntil(
-      caches.open(RUNTIME_CACHE).then((cache) =>
-        Promise.all(data.urls.map((u) => fetch(u, { credentials: "same-origin" }).then((r) => r.ok && cache.put(u, r)).catch(() => undefined))),
-      ),
-    );
-  }
-});
-
-// Background Sync: wake any open CodeLingo tab and let its sync engine (which owns IndexedDB logic) run.
-self.addEventListener("sync", (event) => {
-  if (event.tag !== SYNC_TAG) return;
-  event.waitUntil(
-    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
-      clients.forEach((c) => c.postMessage({ type: "CODELINGO_SYNC_REQUESTED" }));
-    }),
+function offlinePage() {
+  return new Response(
+    '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>CodeLingo is offline</title><body style="font-family:system-ui;background:#110f1d;color:#f4f0ff;display:grid;place-items:center;min-height:100vh;margin:0;text-align:center;padding:24px">' +
+    '<div><h1>You\'re offline</h1><p>Open CodeLingo once while connected and it will work offline after that.</p></div>',
+    { headers: { 'Content-Type': 'text/html; charset=utf-8' }, status: 503 },
   );
-});
+}
