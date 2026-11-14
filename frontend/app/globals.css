@@ -87,15 +87,48 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
-  background: var(--bg);
+  background: var(--page-bg, var(--bg));
+  background-attachment: fixed;
   color: var(--text);
   font-family: var(--font);
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
-:root[data-theme="dark"] body { background: radial-gradient(ellipse 90% 60% at 40% -10%, #2a2150 0%, transparent 60%) fixed, var(--bg); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body { background: radial-gradient(ellipse 90% 60% at 40% -10%, #2a2150 0%, transparent 60%) fixed, var(--bg); } }
+
+/* Cute page background: soft pastel glows (pink, lavender, mint, peach) over a gentle
+   gradient, with tiny polka dots in light mode and twinkly "stars" in dark mode. */
+:root {
+  --page-bg:
+    radial-gradient(circle, rgba(167, 139, 250, .18) 1.6px, transparent 2.2px) 0 0 / 28px 28px,
+    radial-gradient(circle at 8% 12%, rgba(255, 182, 219, .55), transparent 32%),
+    radial-gradient(circle at 92% 8%, rgba(196, 181, 253, .6), transparent 34%),
+    radial-gradient(circle at 86% 88%, rgba(167, 243, 208, .5), transparent 32%),
+    radial-gradient(circle at 10% 92%, rgba(254, 215, 170, .5), transparent 30%),
+    linear-gradient(160deg, #fbf7ff, #f5efff 50%, #fdf3fa);
+}
+:root[data-theme="dark"] {
+  --page-bg:
+    radial-gradient(circle, rgba(255, 255, 255, .22) 1px, transparent 1.6px) 0 0 / 36px 36px,
+    radial-gradient(circle, rgba(255, 200, 235, .16) 1px, transparent 1.6px) 18px 18px / 36px 36px,
+    radial-gradient(circle at 10% 14%, rgba(236, 72, 153, .20), transparent 34%),
+    radial-gradient(circle at 90% 8%, rgba(139, 92, 246, .32), transparent 36%),
+    radial-gradient(circle at 86% 90%, rgba(52, 211, 153, .13), transparent 34%),
+    radial-gradient(circle at 8% 90%, rgba(251, 146, 60, .10), transparent 32%),
+    linear-gradient(160deg, #1b1432, #150f29 55%, #1c1235);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page-bg:
+      radial-gradient(circle, rgba(255, 255, 255, .22) 1px, transparent 1.6px) 0 0 / 36px 36px,
+      radial-gradient(circle, rgba(255, 200, 235, .16) 1px, transparent 1.6px) 18px 18px / 36px 36px,
+      radial-gradient(circle at 10% 14%, rgba(236, 72, 153, .20), transparent 34%),
+      radial-gradient(circle at 90% 8%, rgba(139, 92, 246, .32), transparent 36%),
+      radial-gradient(circle at 86% 90%, rgba(52, 211, 153, .13), transparent 34%),
+      radial-gradient(circle at 8% 90%, rgba(251, 146, 60, .10), transparent 32%),
+      linear-gradient(160deg, #1b1432, #150f29 55%, #1c1235);
+  }
+}
 a { color: var(--accent); }
 /* Tailwind preflight resets heading weights; restore them. Headings use the display font. */
 h1, h2, h3, h4 { font-weight: 700; font-family: var(--display); letter-spacing: -.02em; }
