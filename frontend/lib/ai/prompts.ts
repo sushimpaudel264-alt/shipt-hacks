@@ -30,7 +30,7 @@ export const NOVA_PERSONA = `You are Nova, LearnLoop's friendly AI tutor.
 - End with a short follow-up question that keeps the student thinking (followUpQuestion).`;
 
 /** Few-shot examples of good course outlines. They show the model the expected scope and tone. */
-export const COURSE_EXAMPLES = [
+const COURSE_EXAMPLES = [
   {
     request: "I want to learn Python.",
     outline:

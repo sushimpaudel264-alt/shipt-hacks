@@ -4,10 +4,9 @@
  * the network is only used for browsing the catalog, downloading and updating.
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api/client";
-import * as courseRepo from "@/lib/db/repositories/courseRepo";
-import { cachePages, pagesForCourse } from "@/lib/offline/serviceWorker";
-import { notifyLocalChange } from "@/lib/sync/syncEngine";
+import { api } from "./apiClient";
+import { courseRepo } from "@/lib/db";
+import { cacheCoursePages, notifyLocalChange } from "@/lib/sync";
 import type { Course, CourseListQuery, CourseSummary, DownloadedCourse } from "@/lib/types";
 import { LOCAL, queryKeys } from "./queryKeys";
 
@@ -98,7 +97,7 @@ export function useDownloadCourse() {
       invalidate(row.id);
       void notifyLocalChange();
       // Cache the course's pages now so they open offline even if never visited.
-      void cachePages(pagesForCourse(row.course));
+      void cacheCoursePages(row.course);
     },
   });
 }

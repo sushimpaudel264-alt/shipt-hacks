@@ -355,6 +355,19 @@ export const CourseListQuerySchema = z.object({
 
 export const CourseVersionSchema = z.object({ id, version: z.number().int().min(0) });
 
+/** Dynamic `[id]` route segment. */
+export const IdParamsSchema = z.object({ id });
+
+/** GET /api/courses/versions?ids=a,b,c (comma-separated, max 100). */
+export const CourseVersionsQuerySchema = z.object({
+  ids: z
+    .string()
+    .max(12_000)
+    .optional()
+    .transform((s) => (s ?? "").split(",").map((x) => x.trim()).filter(Boolean))
+    .pipe(z.array(id).max(100)),
+});
+
 export const SyncRequestSchema = z.object({
   events: z.array(SyncEventSchema).min(1).max(50),
 });

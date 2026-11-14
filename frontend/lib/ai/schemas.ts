@@ -7,7 +7,7 @@
 import { z } from "zod";
 import { CategorySchema, DifficultySchema, QuestionTypeSchema, SectionTypeSchema } from "@/lib/schemas";
 
-export const DraftActivitySchema = z.object({
+const DraftActivitySchema = z.object({
   kind: z.enum(["choose", "fill-in"]),
   prompt: z.string(),
   options: z.array(z.string()).optional(),
@@ -16,7 +16,7 @@ export const DraftActivitySchema = z.object({
   successMessage: z.string().optional(),
 });
 
-export const DraftSectionSchema = z.object({
+const DraftSectionSchema = z.object({
   type: SectionTypeSchema,
   title: z.string(),
   body: z.string(),
@@ -35,7 +35,7 @@ export const DraftQuestionSchema = z.object({
   explanation: z.string(),
 });
 
-export const DraftLessonSchema = z.object({
+const DraftLessonSchema = z.object({
   title: z.string(),
   summary: z.string(),
   estimatedMinutes: z.number().int(),

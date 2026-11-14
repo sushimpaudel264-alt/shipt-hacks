@@ -3,13 +3,10 @@
  */
 import "fake-indexeddb/auto";
 import { beforeEach, describe, expect, it } from "vitest";
-import { LearnLoopDB, setDBForTests } from "@/lib/db/database";
-import * as courseRepo from "@/lib/db/repositories/courseRepo";
-import * as progressRepo from "@/lib/db/repositories/progressRepo";
-import * as studentRepo from "@/lib/db/repositories/studentRepo";
+import { courseRepo, LearnLoopDB, progressRepo, setDBForTests, studentRepo } from "@/lib/db";
 import { CourseSchema, GeneratedQuizSchema, LearningPathSchema, TutorResponseSchema } from "@/lib/schemas";
-import { resetStore } from "@/lib/server/store";
-import { SEED_COURSES } from "@/lib/mock/courses";
+import { resetStore } from "@/lib/server";
+import { SEED_COURSES } from "@/lib/mock";
 import type { AIGeneratedCourse } from "@/lib/types";
 import { apiFetch, network } from "./helpers/apiFetch";
 

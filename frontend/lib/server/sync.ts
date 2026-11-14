@@ -13,7 +13,7 @@ import "server-only";
  *  - Badges: set union.
  *  - Streak: rebuilt from the set of distinct activity dates (student-local) in the event log.
  */
-import { streakFromDates } from "@/lib/gamification/streak";
+import { streakFromDates } from "@/lib/gamification";
 import type { ServerStudentState, SyncEvent } from "@/lib/types";
 import { HttpError } from "./http";
 import { getStudentRecord, KNOWN_BADGE_IDS, type ServerStudentRecord } from "./store";
@@ -48,7 +48,7 @@ function applyEvent(rec: ServerStudentRecord, event: SyncEvent): void {
   if (event.type !== "course-downloaded") rec.activityDates.add(event.localDate);
 }
 
-export function toServerState(rec: ServerStudentRecord): ServerStudentState {
+function toServerState(rec: ServerStudentRecord): ServerStudentState {
   return {
     studentId: rec.studentId,
     xp: rec.xp,

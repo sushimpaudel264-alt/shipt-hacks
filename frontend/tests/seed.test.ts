@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BADGES } from "@/lib/mock/badges";
-import { SEED_COURSES } from "@/lib/mock/courses";
-import { CONTRIBUTORS, ORGANIZATIONS } from "@/lib/mock/people";
+import { BADGES, CONTRIBUTORS, ORGANIZATIONS, SEED_COURSES } from "@/lib/mock";
 import { BadgeSchema, ContributorRoleSchema, ContributorSchema, CourseSchema, OrganizationSchema } from "@/lib/schemas";
 
 describe("seed data", () => {

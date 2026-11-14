@@ -2,7 +2,7 @@
  * Real connectivity check. navigator.onLine only knows whether a network interface is up;
  * a Chromebook on home WiFi with no internet still reports "online". So we ping /api/health.
  */
-export const HEALTH_TIMEOUT_MS = 5000;
+const HEALTH_TIMEOUT_MS = 5000;
 
 export async function checkHealth(timeoutMs = HEALTH_TIMEOUT_MS, fetchImpl: typeof fetch = fetch): Promise<boolean> {
   if (typeof navigator !== "undefined" && navigator.onLine === false) return false;

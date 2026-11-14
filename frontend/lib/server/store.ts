@@ -10,10 +10,8 @@ import "server-only";
  *
  * The store is kept on globalThis so Next.js dev hot-reloads don't wipe it.
  */
-import { BADGES } from "@/lib/mock/badges";
-import { SEED_COURSES } from "@/lib/mock/courses";
-import { CONTRIBUTORS, DEMO_STUDENT_ID, DEMO_STUDENT_SEED, ORGANIZATIONS } from "@/lib/mock/people";
-import { addDays, toLocalDate } from "@/lib/gamification/streak";
+import { BADGES, CONTRIBUTORS, DEMO_STUDENT_ID, DEMO_STUDENT_SEED, ORGANIZATIONS, SEED_COURSES } from "@/lib/mock";
+import { addDays, toLocalDate } from "@/lib/gamification";
 import type { Contributor, Course, Organization } from "@/lib/types";
 
 export interface ServerStudentRecord {

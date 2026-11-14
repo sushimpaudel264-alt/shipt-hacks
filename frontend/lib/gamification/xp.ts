@@ -1,8 +1,8 @@
 import type { Lesson, Question, Quiz, QuizAnswer } from "@/lib/types";
 
 /** Quiz bonus is worth up to 50% of the lesson's base XP, scaled by score. */
-export const QUIZ_BONUS_RATIO = 0.5;
-export const XP_PER_LEVEL = 100;
+const QUIZ_BONUS_RATIO = 0.5;
+const XP_PER_LEVEL = 100;
 
 const clampScore = (score: number) => Math.max(0, Math.min(100, score));
 

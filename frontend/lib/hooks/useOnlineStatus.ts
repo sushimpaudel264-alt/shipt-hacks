@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { checkHealth } from "@/lib/sync/connectivity";
+import { checkHealth } from "@/lib/sync";
 
 export interface OnlineStatus {
   /** navigator.onLine: the device has a network interface up. */

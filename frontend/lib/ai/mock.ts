@@ -5,7 +5,7 @@ import type { DraftCourse, DraftLearningPath, DraftQuestion, DraftTutor } from "
 
 export const MOCK_MODEL = "mock-ai";
 
-export const INTRO_TO_PYTHON: DraftCourse = {
+const INTRO_TO_PYTHON: DraftCourse = {
   title: "Intro to Python",
   description: "Learn to talk to computers with Python! Print messages, store treasures in variables, and teach your code to make decisions.",
   thumbnailEmoji: "🐍",

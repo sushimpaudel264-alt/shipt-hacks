@@ -1,40 +1,62 @@
-# shipt-hacks
+# LearnLoop
 
-LearnLoop: a Next.js app whose API lives in its own route handlers (`frontend/app/api`).
-The frontend calls them with relative paths (`/api/courses`, `/api/health`, ...), so there is no separate API URL to configure.
+**Download at school. Learn anywhere.**
 
-## Run it
+LearnLoop is an offline-first learning app (PWA) for students ages 8–16 on school Chromebooks with unreliable home internet.
+Students download courses while on school WiFi, then learn at home with no connection: lessons, quizzes, XP, streaks and badges all work offline.
+Progress syncs back automatically when they reconnect. Teachers and community partners can publish courses, and an AI tutor ("Nova") can generate new courses and answer questions.
+
+**Live demo:** https://learn-offline-two.vercel.app
+
+## Run locally
+
+Requires Node.js 20+.
 
 ```powershell
 cd frontend
 npm install
-Copy-Item .env.example .env.local   # first time only; mock AI works without a Gemini key
-npm run dev
+Copy-Item .env.example .env.local   # first time only; mock AI works with no API key
+npm run dev                          # http://localhost:3000
 ```
 
-Open http://localhost:3000. It should say **Backend: ok** (it checks http://localhost:3000/api/health).
+| Command (in `frontend/`) | What it does |
+|---|---|
+| `npm run dev` | Dev server (service worker off) |
+| `npm run build` then `npm start` | Production build + server (service worker on; needed to test offline reloads) |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript, no emit |
+| `npm test` | Vitest: gamification rules, offline flow, sync idempotency, API and mock AI |
 
-> If PowerShell blocks scripts, run once: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
+To try the offline flow without any UI, open **`/debug/data`** (see [frontend/BACKEND.md](frontend/BACKEND.md#demo-script)).
 
-## LearnLoop data layer
+## Folder map
 
-The LearnLoop API, offline storage, sync and AI live inside the Next.js app (`frontend/app/api`, `frontend/lib`).
-See **[frontend/BACKEND.md](frontend/BACKEND.md)** for hooks, API contracts, the offline demo script and known limitations.
+One Next.js app in `frontend/` holds both the UI and the API. Vercel deploys `frontend/` as its root directory.
 
-```powershell
-cd frontend
-npm test                             # unit + offline/sync integration tests
-npm run build; npx next start        # production mode (service worker enabled)
+```
+frontend/
+├── app/
+│   ├── api/                  API route handlers (server). One standard pattern: see BACKEND.md
+│   ├── debug/data/           Diagnostics page that exercises every hook
+│   ├── offline/              Offline fallback page served by the service worker
+│   ├── layout.tsx            Root layout (wraps the app in <LearnLoopProvider>)
+│   └── page.tsx              Starter home page (UI teams replace this)
+├── lib/
+│   ├── types/                Shared TypeScript types (inferred from schemas)
+│   ├── schemas/              Zod schemas: the API and data contracts
+│   ├── mock/                 Seed data: courses, organizations, contributors, badges, demo student
+│   ├── gamification/         Pure XP / streak / badge rules
+│   ├── db/                   IndexedDB (Dexie) database + repositories (browser)
+│   ├── sync/                 Sync engine, connectivity checks, service worker helpers (browser)
+│   ├── server/               In-memory store + API business logic (server-only)
+│   ├── ai/                   Gemini services, prompts, mock AI (server-only)
+│   └── hooks/                React Query hooks + <LearnLoopProvider>: the ONLY data API for UI code
+├── public/sw.js              Service worker
+├── tests/                    Vitest suites
+├── BACKEND.md                Architecture: offline-first design, sync, AI, API routes
+├── FRONTEND_GUIDE.md         Guide for building UIs (written for AI coding tools)
+└── AGENTS.md                 Pointer read automatically by AI coding agents
 ```
 
-## Optional: FastAPI service (`backend/`)
-
-The original FastAPI skeleton is not used by the app. Keep it only if you need a Python service later.
-
-```powershell
-cd backend
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-uvicorn main:app --reload --port 8000   # http://localhost:8000/health
-```
+Building a UI? Read [frontend/FRONTEND_GUIDE.md](frontend/FRONTEND_GUIDE.md).
+Judging the architecture? Read [frontend/BACKEND.md](frontend/BACKEND.md).

@@ -13,7 +13,7 @@ export interface AICourseRow {
   course: Course;
 }
 
-export interface MetaRow {
+interface MetaRow {
   key: string;
   value: unknown;
 }

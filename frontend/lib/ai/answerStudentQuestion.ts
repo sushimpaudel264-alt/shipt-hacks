@@ -9,7 +9,7 @@ import { DraftTutorSchema, issuesOf, toGeminiSchema } from "./schemas";
 const MAX_WORDS = 150;
 
 /** Backstop for the prompt's "under 150 words" rule; cuts at a sentence boundary when possible. */
-export function capWords(text: string, max = MAX_WORDS): string {
+function capWords(text: string, max = MAX_WORDS): string {
   const words = text.trim().split(/\s+/);
   if (words.length <= max) return text.trim();
   const clipped = words.slice(0, max).join(" ");

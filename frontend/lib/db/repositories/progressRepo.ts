@@ -10,9 +10,7 @@
  *  - Quiz bonus is awarded on improvement only: new bonus(best score) - old bonus(previous best).
  *  So total XP for a lesson never exceeds calculateLessonXP(lesson, bestScore).
  */
-import { evaluateBadges } from "@/lib/gamification/badges";
-import { toLocalDate, updateStreak } from "@/lib/gamification/streak";
-import { quizBonusXP, scoreQuiz } from "@/lib/gamification/xp";
+import { evaluateBadges, quizBonusXP, scoreQuiz, toLocalDate, updateStreak } from "@/lib/gamification";
 import type { Badge, Category, LearningOutcome, Lesson, Progress, QuizAnswer, QuizResult, SyncEvent } from "@/lib/types";
 import { getDB } from "../database";
 import { getStudent } from "./studentRepo";
@@ -143,10 +141,9 @@ export async function completeLesson(input: { courseId: string; lessonId: string
 }
 
 /** Grades and stores a quiz attempt; also completes the lesson if it wasn't already. */
-export async function saveQuizResult(input: { courseId: string; lessonId: string; answers: QuizAnswer[] }): Promise<LearningOutcome> {
+export async function submitQuiz(input: { courseId: string; lessonId: string; answers: QuizAnswer[] }): Promise<LearningOutcome> {
   return applyLearning({ courseId: input.courseId, lessonId: input.lessonId, quiz: { answers: input.answers } });
 }
-export const submitQuiz = saveQuizResult;
 
 /** Marks a lesson in-progress when opened (local only; "furthest status wins" so this never downgrades). */
 export async function startLesson(courseId: string, lessonId: string): Promise<Progress> {

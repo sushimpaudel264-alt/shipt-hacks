@@ -7,7 +7,7 @@ import "server-only";
 import { GoogleGenAI } from "@google/genai";
 import { SAFETY_RULES } from "./prompts";
 
-export interface AIConfig {
+interface AIConfig {
   mock: boolean;
   apiKey?: string;
   model?: string;

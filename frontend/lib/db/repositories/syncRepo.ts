@@ -3,7 +3,7 @@
  * Events move: queued → syncing → synced, or back to queued with attempts+1 on failure,
  * and become "failed" after MAX_SYNC_ATTEMPTS (shown to the user; can be retried manually).
  */
-import { toLocalDate } from "@/lib/gamification/streak";
+import { toLocalDate } from "@/lib/gamification";
 import type { NewSyncEvent, SyncEvent } from "@/lib/types";
 import { getDB } from "../database";
 
@@ -24,12 +24,6 @@ export function buildSyncEvent(studentId: string, event: NewSyncEvent, now = new
     status: "queued",
     attempts: 0,
   } as SyncEvent;
-}
-
-export async function enqueue(studentId: string, event: NewSyncEvent): Promise<SyncEvent> {
-  const full = buildSyncEvent(studentId, event);
-  await getDB().syncQueue.add(full);
-  return full;
 }
 
 /** Oldest-first events that still need sending. */

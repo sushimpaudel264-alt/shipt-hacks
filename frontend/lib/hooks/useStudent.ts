@@ -1,8 +1,8 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import * as studentRepo from "@/lib/db/repositories/studentRepo";
-import { getLevel } from "@/lib/gamification/xp";
-import { BADGES } from "@/lib/mock/badges";
+import { studentRepo } from "@/lib/db";
+import { getLevel } from "@/lib/gamification";
+import { BADGES } from "@/lib/mock";
 import type { Badge, Student } from "@/lib/types";
 import { LOCAL, queryKeys } from "./queryKeys";
 

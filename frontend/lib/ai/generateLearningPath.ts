@@ -1,6 +1,6 @@
 import "server-only";
 import { LearningPathSchema } from "@/lib/schemas";
-import { listPublishedCourses } from "@/lib/server/courses";
+import { listPublishedCourses } from "@/lib/server";
 import type { CourseSummary, LearningPath, LearningPathRequest } from "@/lib/types";
 import { generateValidated, getAIConfig, mockDelay, type Validation } from "./gemini";
 import { mockLearningPath } from "./mock";

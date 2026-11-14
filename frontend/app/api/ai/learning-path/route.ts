@@ -1,11 +1,10 @@
-import { generateLearningPath } from "@/lib/ai";
+import { aiGuard, generateLearningPath, runAI } from "@/lib/ai";
 import { LearningPathRequestSchema } from "@/lib/schemas";
-import { aiGuard, runAI } from "@/lib/server/aiRoute";
-import { handle, ok, readJson } from "@/lib/server/http";
+import { handle, ok, readJson } from "@/lib/server";
 
 export const dynamic = "force-dynamic";
 
-/** POST { goal, completedCourseIds?, ageYears? } → LearningPath. */
+/** POST /api/ai/learning-path { goal, completedCourseIds?, ageYears? } → LearningPath. Rate limited per IP. */
 export const POST = handle(async (req: Request) => {
   aiGuard(req);
   const input = await readJson(req, LearningPathRequestSchema);

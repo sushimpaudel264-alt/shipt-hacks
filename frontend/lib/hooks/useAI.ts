@@ -1,9 +1,9 @@
 "use client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
-import { api, ApiRequestError } from "@/lib/api/client";
-import * as courseRepo from "@/lib/db/repositories/courseRepo";
-import { cachePages, pagesForCourse } from "@/lib/offline/serviceWorker";
+import { api, ApiRequestError } from "./apiClient";
+import { courseRepo } from "@/lib/db";
+import { cacheCoursePages } from "@/lib/sync";
 import type { AIGeneratedCourse, DownloadedCourse, GenerateCourseRequest, GenerateQuizRequest, LearningPathRequest, TutorMessage, TutorRequest } from "@/lib/types";
 import { useOnlineStatus } from "./useOnlineStatus";
 import { LOCAL, queryKeys } from "./queryKeys";
@@ -27,7 +27,7 @@ export function useGenerateCourse(options: { autoSave?: boolean } = {}) {
       if (!isReachable) throw offlineError();
       const generated = await api.generateCourse(req);
       const saved = autoSave ? await courseRepo.saveAICourse(generated.course, { prompt: generated.prompt, model: generated.model }) : null;
-      if (saved) void cachePages(pagesForCourse(saved.course));
+      if (saved) void cacheCoursePages(saved.course);
       return { generated, saved };
     },
     onSuccess: () => {

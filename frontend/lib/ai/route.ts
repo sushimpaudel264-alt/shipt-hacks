@@ -1,7 +1,6 @@
 import "server-only";
-import { AIOutputError } from "@/lib/ai/gemini";
-import { clientIp, HttpError } from "./http";
-import { checkRateLimit } from "./rateLimit";
+import { AIOutputError } from "./gemini";
+import { checkRateLimit, clientIp, HttpError } from "@/lib/server";
 
 /** Per-IP rate limit shared by every AI route (demo-only, see rateLimit.ts). */
 export function aiGuard(req: Request): void {

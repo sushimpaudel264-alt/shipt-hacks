@@ -1,6 +1,6 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { getDB } from "@/lib/db/database";
+import { getDB } from "@/lib/db";
 import { LOCAL, queryKeys } from "./queryKeys";
 
 export interface StorageEstimate {

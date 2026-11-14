@@ -1,11 +1,11 @@
 import "server-only";
-import { estimateSizeBytes } from "@/lib/mock/builders";
+import { estimateSizeBytes } from "@/lib/mock";
 import { CourseSchema } from "@/lib/schemas";
 import type { Course, CourseListQuery, CoursePackage, CourseSummary, CourseVersion, Organization } from "@/lib/types";
 import { HttpError, notFound, zodDetails } from "./http";
 import { getStore } from "./store";
 
-export function toSummary(course: Course): CourseSummary {
+function toSummary(course: Course): CourseSummary {
   const { lessons, ...rest } = course;
   return {
     ...rest,

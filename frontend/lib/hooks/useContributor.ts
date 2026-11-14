@@ -1,6 +1,6 @@
 "use client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { contributorApi, type ContributorCourseInput, type ContributorCoursePatch } from "@/lib/api/client";
+import { contributorApi, type ContributorCourseInput, type ContributorCoursePatch } from "./apiClient";
 import type { ContributorRole } from "@/lib/types";
 import { queryKeys } from "./queryKeys";
 

@@ -1,21 +1,20 @@
-import { ContributorCoursePatchSchema } from "@/lib/schemas";
-import { deleteCourse, requireContributor, updateCourse } from "@/lib/server/contributor";
-import { handle, ok, readJson } from "@/lib/server/http";
+import { ContributorCoursePatchSchema, IdParamsSchema } from "@/lib/schemas";
+import { deleteCourse, handle, ok, readJson, readParams, requireContributor, updateCourse, type IdContext } from "@/lib/server";
 
 export const dynamic = "force-dynamic";
 
-type Ctx = { params: Promise<{ id: string }> };
-
-export const PATCH = handle(async (req: Request, ctx: Ctx) => {
+/** PATCH /api/contributor/courses/:id ContributorCoursePatch → Course. */
+export const PATCH = handle(async (req: Request, ctx: IdContext) => {
   const contributor = requireContributor(req);
-  const { id } = await ctx.params;
+  const { id } = await readParams(ctx, IdParamsSchema);
   const patch = await readJson(req, ContributorCoursePatchSchema);
   return ok(updateCourse(contributor, id, patch));
 });
 
-export const DELETE = handle(async (req: Request, ctx: Ctx) => {
+/** DELETE /api/contributor/courses/:id → { deleted: true, id }. Drafts only (409 otherwise). */
+export const DELETE = handle(async (req: Request, ctx: IdContext) => {
   const contributor = requireContributor(req);
-  const { id } = await ctx.params;
+  const { id } = await readParams(ctx, IdParamsSchema);
   deleteCourse(contributor, id);
   return ok({ deleted: true, id });
 });

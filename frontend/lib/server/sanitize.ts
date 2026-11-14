@@ -4,7 +4,7 @@ import "server-only";
  * Contributor content is rendered as plain text (no HTML), so the safest sanitizer is to strip
  * all markup rather than allow-list tags. Also neutralises javascript:/data: URLs and control chars.
  */
-export function sanitizeText(input: string): string {
+function sanitizeText(input: string): string {
   return input
     .replace(/<\s*(script|style|iframe|object|embed)[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi, "")
     .replace(/<[^>]*>/g, "")

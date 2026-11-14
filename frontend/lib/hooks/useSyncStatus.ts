@@ -1,8 +1,8 @@
 "use client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useSyncExternalStore } from "react";
-import { getQueue } from "@/lib/db/repositories/syncRepo";
-import { getSyncState, retryFailed, subscribeSyncState, syncNow } from "@/lib/sync/syncEngine";
+import { syncRepo } from "@/lib/db";
+import { getSyncState, retryFailed, subscribeSyncState, syncNow } from "@/lib/sync";
 import type { SyncState } from "@/lib/types";
 import { LOCAL, queryKeys } from "./queryKeys";
 
@@ -28,5 +28,5 @@ export function useSyncStatus() {
 
 /** Raw sync queue (newest first) for a "pending changes" panel or diagnostics. */
 export function useSyncQueue() {
-  return useQuery({ queryKey: queryKeys.syncQueue, ...LOCAL, queryFn: getQueue });
+  return useQuery({ queryKey: queryKeys.syncQueue, ...LOCAL, queryFn: () => syncRepo.getQueue() });
 }

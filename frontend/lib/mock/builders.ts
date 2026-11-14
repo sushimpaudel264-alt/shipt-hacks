@@ -58,7 +58,7 @@ export interface LessonInput {
   passingScore?: number;
 }
 
-export function buildLesson(courseId: string, order: number, input: LessonInput): Lesson {
+function buildLesson(courseId: string, order: number, input: LessonInput): Lesson {
   const lessonId = `${courseId}-${input.slug}`;
   return {
     id: lessonId,

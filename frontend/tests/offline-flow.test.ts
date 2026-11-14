@@ -4,15 +4,11 @@
  */
 import "fake-indexeddb/auto";
 import { beforeEach, describe, expect, it } from "vitest";
-import { LearnLoopDB, setDBForTests } from "@/lib/db/database";
-import * as courseRepo from "@/lib/db/repositories/courseRepo";
-import * as progressRepo from "@/lib/db/repositories/progressRepo";
-import * as studentRepo from "@/lib/db/repositories/studentRepo";
-import * as syncRepo from "@/lib/db/repositories/syncRepo";
-import { addDays, toLocalDate } from "@/lib/gamification/streak";
-import { SEED_COURSES } from "@/lib/mock/courses";
-import { resetStore } from "@/lib/server/store";
-import { resetSyncEngineForTests, setSyncFetch, syncNow } from "@/lib/sync/syncEngine";
+import { courseRepo, LearnLoopDB, progressRepo, setDBForTests, studentRepo, syncRepo } from "@/lib/db";
+import { addDays, toLocalDate } from "@/lib/gamification";
+import { SEED_COURSES } from "@/lib/mock";
+import { resetStore } from "@/lib/server";
+import { resetSyncEngineForTests, setSyncFetch, syncNow } from "@/lib/sync";
 import { apiFetch, network } from "./helpers/apiFetch";
 
 const variables = SEED_COURSES[0].lessons[0];

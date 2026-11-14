@@ -9,18 +9,17 @@
  * after 5 attempts an event is "failed" and surfaced via status "error".
  * Safe to run concurrently/repeatedly: runs are serialized and the server dedupes event ids.
  */
-import { setMeta } from "@/lib/db/database";
-import * as syncRepo from "@/lib/db/repositories/syncRepo";
+import { setMeta, syncRepo } from "@/lib/db";
 import { SyncResponseSchema } from "@/lib/schemas";
 import type { ServerStudentState, SyncState } from "@/lib/types";
 import { checkHealth } from "./connectivity";
 import { deriveStatus, getSyncState, setSyncState, subscribeSyncState } from "./syncStatus";
 
-export const SYNC_BATCH_SIZE = 50;
-export const SYNC_INTERVAL_MS = 60_000;
+const SYNC_BATCH_SIZE = 50;
+const SYNC_INTERVAL_MS = 60_000;
 const BACKOFF_BASE_MS = 2_000;
 const BACKOFF_MAX_MS = 60_000;
-export const BACKGROUND_SYNC_TAG = "learnloop-sync";
+const BACKGROUND_SYNC_TAG = "learnloop-sync";
 
 let fetchImpl: typeof fetch = (...args) => fetch(...args);
 let running: Promise<SyncState> | null = null;

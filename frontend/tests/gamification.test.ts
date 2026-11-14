@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { evaluateBadges } from "@/lib/gamification/badges";
-import { daysBetween, streakFromDates, toLocalDate, updateStreak } from "@/lib/gamification/streak";
-import { calculateLessonXP, getLevel, quizBonusXP, scoreQuiz } from "@/lib/gamification/xp";
-import { SEED_COURSES } from "@/lib/mock/courses";
+import { calculateLessonXP, daysBetween, evaluateBadges, getLevel, quizBonusXP, scoreQuiz, streakFromDates, toLocalDate, updateStreak } from "@/lib/gamification";
+import { SEED_COURSES } from "@/lib/mock";
 import type { Progress, Streak } from "@/lib/types";
 
 const lesson = { xpReward: 20 };

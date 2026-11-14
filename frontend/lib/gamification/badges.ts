@@ -1,7 +1,7 @@
-import { BADGES } from "@/lib/mock/badges";
+import { BADGES } from "@/lib/mock";
 import type { Badge, BadgeRule, Category, Progress, Student } from "@/lib/types";
 
-export type BadgeStudentState = Pick<Student, "xp" | "streak" | "achievements">;
+type BadgeStudentState = Pick<Student, "xp" | "streak" | "achievements">;
 
 function ruleMet(
   rule: BadgeRule,

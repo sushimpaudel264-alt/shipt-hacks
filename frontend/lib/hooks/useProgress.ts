@@ -1,7 +1,7 @@
 "use client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import * as progressRepo from "@/lib/db/repositories/progressRepo";
-import { notifyLocalChange } from "@/lib/sync/syncEngine";
+import { progressRepo } from "@/lib/db";
+import { notifyLocalChange } from "@/lib/sync";
 import type { LearningOutcome, Progress, QuizAnswer } from "@/lib/types";
 import { LOCAL, queryKeys } from "./queryKeys";
 

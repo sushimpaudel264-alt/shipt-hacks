@@ -1,5 +1,5 @@
 import "server-only";
-import { estimateSizeBytes } from "@/lib/mock/builders";
+import { estimateSizeBytes } from "@/lib/mock";
 import { CourseSchema } from "@/lib/schemas";
 import type { AIGeneratedCourse, Course, GenerateCourseRequest } from "@/lib/types";
 import { generateValidated, getAIConfig, mockDelay, type Validation } from "./gemini";
@@ -7,11 +7,11 @@ import { MOCK_MODEL, mockCourseFor } from "./mock";
 import { coursePrompt } from "./prompts";
 import { DraftCourseSchema, issuesOf, toGeminiSchema, type DraftCourse } from "./schemas";
 
-export const AI_ORGANIZATION_ID = "learnloop-ai";
-export const AI_AUTHOR_ID = "nova-ai";
+const AI_ORGANIZATION_ID = "learnloop-ai";
+const AI_AUTHOR_ID = "nova-ai";
 
 /** Adds ids/bookkeeping to a model draft and validates it against the SAME CourseSchema as official courses. */
-export function draftToCourse(draft: DraftCourse, now = new Date()): Validation<Course> {
+function draftToCourse(draft: DraftCourse, now = new Date()): Validation<Course> {
   const slug = draft.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 50) || "ai-course";
   const suffix = crypto.randomUUID().slice(0, 8);
   const id = `ai-${slug}-${suffix}`;
