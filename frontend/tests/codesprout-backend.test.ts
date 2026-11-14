@@ -119,6 +119,16 @@ describe("API, downloads, progress and sync", () => {
     expect((await res.json()).serverStudentState.xp).toBe(105);
   });
 
+  it("signs Log in and Create account into the demo student (no real accounts)", async () => {
+    const api = bridge.createBackendApi();
+    const demo = { token: "demo", user: { username: "jordan", display_name: "Jordan", role: "student" } };
+    expect(await api.login("anyone", "whatever-password")).toEqual(demo);
+    expect(
+      await api.register({ username: "newkid", password: "password123", display_name: "New Kid", title: "Student", access_code: "" }),
+    ).toEqual(demo);
+    expect(await api.logout()).toEqual({});
+  });
+
   it("uses the data layer's badge catalog and the demo student", async () => {
     expect(bridge.BADGES).toHaveLength(8);
     expect(bridge.BADGES[0]).toEqual({ id: "first-lesson", icon: "🌱", name: "First Lesson", desc: "Finished your very first lesson!" });

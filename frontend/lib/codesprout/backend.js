@@ -104,6 +104,13 @@ const summaryOf = (c) => {
 export function createBackendApi() {
   return {
     me: async () => DEMO_USER(),
+    /**
+     * There are no real accounts: everyone uses the demo student. Log in and Create account both
+     * sign in to that profile and resolve to { token, user } like the old API did. The submitted
+     * name, username and password are not stored anywhere.
+     */
+    login: async (...credentials) => { void credentials; return demoSession(); },
+    register: async (...signupForm) => { void signupForm; return demoSession(); },
     logout: async () => ({}),
     async getCourses() {
       const list = await getJson('/api/courses');
@@ -131,6 +138,12 @@ export function createBackendApi() {
 let student = null;
 export const DEMO_USER = () => ({ username: 'jordan', display_name: student?.name || 'Jordan', role: 'student' });
 export const getStudentSnapshot = () => student;
+
+/** The session the UI stores after signing in: always the demo student. */
+async function demoSession() {
+  await refreshStudent();
+  return { token: 'demo', user: DEMO_USER() };
+}
 export async function refreshStudent() {
   student = await studentRepo.getStudent();
   return student;
