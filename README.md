@@ -2,14 +2,15 @@
 
 <img src="frontend/public/logo-192.png" alt="Codelingo mascot" width="120">
 
-An offline-first learning platform. Students download courses while they have internet, keep learning with no connection, and their progress syncs automatically when they're back online. Teachers and other administrators create and publish the courses.
+An offline-first learning platform and installable web app (PWA). Students install Codelingo or use it in the browser, download courses while they have internet, keep learning (and playing coding games) with no connection, and their progress syncs automatically when they're back online. Teachers and other administrators create and publish the courses.
 
 FastAPI backend + Next.js frontend.
 
 ## How offline works
 
+- **Install / app files:** a service worker (`frontend/public/sw.js`) saves the app on the **first visit**: the page, every script and style it uses, both Arcade games, the fonts (self-hosted in `public/fonts`) and the icons. After that Codelingo opens with no internet, in the browser or as an installed app. Students can install it from the **⬇ Install app** button (Chrome, Edge, Android) or **Share → Add to Home Screen** (iPhone/iPad). The Offline Center shows whether the app is saved and installed.
 - **Download:** each course card has a **⬇ Download** button. The whole course (lessons, quizzes, activities, images) is saved in the browser's IndexedDB.
-- **Learn offline:** downloaded courses open from the device. A service worker (`frontend/public/sw.js`) caches the app itself, so it loads even with no connection.
+- **Learn offline:** downloaded courses open from the device.
 - **Queue and sync:** every completed lesson, quiz score and piece of code is saved on the device immediately and queued. The header shows **Online**, **Offline**, **Syncing** or **Queued**, and the queue syncs automatically when the connection returns (plus a retry every 30 seconds).
 - **Merge, don't overwrite:** the server merges what each device sends. Completed lessons, streak days and badges are combined, the best quiz score wins, and the newest code wins. Using two devices offline never loses work.
 - **Updates:** publishing a course bumps its version. Downloaded copies then show **⟳ Update**.
@@ -50,6 +51,17 @@ Administrators edit a **draft**. Students only ever see the **published** versio
 
 The first run seeds four courses (HTML & CSS, JavaScript, Fractions Made Simple, Our Solar System) from `backend/data/seed_courses.json`.
 
+## Arcade (second playground)
+
+`#/arcade` has two coding games. They run in the app, work offline, and save to the learner's account (synced like other progress; the newest save wins across devices).
+
+| Game | File | Teaches |
+|---|---|---|
+| 🏰 Code Dungeon | `frontend/public/games/code-dungeon.html` | Python variables, if statements, loops (3 levels) |
+| 🌽 Pixel Farm | `frontend/public/games/pixel-farm.html` | Function calls, for loops and 2D grids, with Moo the mascot |
+
+Each game is a self-contained HTML page. The app opens it with `?save=<key>`; the game saves there in `localStorage`, and the app copies the save into `progress.play["game:<id>"]`. To add a game, put its page in `public/games`, add it to `GAMES` in `lib/codesprout/app.js` and to `CORE` in `public/sw.js`.
+
 ## Gamification
 
 - **XP:** 10 XP per estimated minute of each completed item.
@@ -70,12 +82,14 @@ backend/
   data/progress.db   SQLite database (created on first run, gitignored)
 frontend/
   app/               Layout, page, styles (globals.css), manifest.ts
-  public/sw.js       Service worker: caches the app for offline use
+  public/sw.js       Service worker: saves the app, games, fonts and icons for offline use
+  public/games/      Arcade games (self-contained HTML pages)
+  public/fonts/      Self-hosted fonts (DM Sans, Space Grotesk, JetBrains Mono, Nunito, Fredoka)
   components/Codelingo.tsx  Client component that mounts the app
   lib/codesprout/
     app.js           Router, pages, sync queue, downloads
     admin.js         Course management and editor
-    offline.js       IndexedDB storage, storage estimate, service worker registration
+    offline.js       IndexedDB storage, storage estimate, service worker + install helpers
     gamify.js        XP, streaks, badges, learning history
     code.js          Code editor and sandboxed code runners
     api.js           Backend client
@@ -108,7 +122,16 @@ npm run dev
 
 Open http://localhost:3000.
 
-**To try offline mode:** log in, download a course, then in Chrome DevTools open **Network → No throttling ▾ → Offline** (or stop the backend) and reload. For a production-like test, use `npm run build` and `npm start`.
+**To try offline mode:** the service worker only runs in production builds (in `npm run dev` it removes itself so you never get stale code). Run `npm run build` then `npm start`, open http://localhost:3000 once, log in and download a course, then in Chrome DevTools choose **Network → No throttling ▾ → Offline** and reload.
+
+## Deploying to Vercel
+
+1. Import the repo in Vercel and set **Root Directory** to `frontend` (framework: Next.js).
+2. Add the environment variable `NEXT_PUBLIC_API_URL` = your backend's public URL (https). It's baked in at build time, so redeploy after changing it.
+3. Deploy. Vercel serves over HTTPS, which service workers and installing require. `next.config.ts` sends `sw.js` with no-cache headers so students get updates.
+4. On the backend, set `FRONTEND_URL` to your Vercel URL (e.g. `https://codelingo.vercel.app`) so the browser may call the API.
+
+The backend stores everything in SQLite, so host it somewhere with a persistent disk (Render, Railway, Fly.io, a VM). Vercel's serverless functions have no persistent disk, so a SQLite database there would be wiped.
 
 ## API
 

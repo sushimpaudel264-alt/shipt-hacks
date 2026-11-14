@@ -11,7 +11,10 @@
  */
 import { createApi } from './api';
 import { createEditor, createRunners, consoleView, tabs } from './code';
-import { downloads, meta, storageEstimate, requestPersistence, registerServiceWorker } from './offline';
+import {
+  downloads, meta, storageEstimate, requestPersistence, registerServiceWorker,
+  appOfflineStatus, installState, promptInstall,
+} from './offline';
 import { BADGES, XP_PER_MINUTE, computeStats, qualifiedBadges, awardBadges, learningHistory, keyOf } from './gamify';
 import { renderAdminList, renderEditor } from './admin';
 import {
@@ -80,7 +83,12 @@ export function mount(root, { apiUrl }) {
     for (const [k, at] of Object.entries(remote.badges || {})) if (!store.badges[k] || at < store.badges[k]) store.badges[k] = at;
     store.days = [...new Set([...(remote.days || []), ...store.days])].sort();
     store.code = { ...(remote.code || {}), ...store.code };
-    store.play = { ...(remote.play || {}), ...store.play };
+    const play = { ...(remote.play || {}), ...store.play };
+    for (const [k, v] of Object.entries(remote.play || {})) {
+      // Arcade saves: keep whichever device saved most recently.
+      if (k.startsWith('game:') && saveTime(v) > saveTime(store.play[k])) play[k] = v;
+    }
+    store.play = play;
     store.last = store.last || remote.last || null;
   }
 
@@ -332,7 +340,7 @@ export function mount(root, { apiUrl }) {
     const theme = '<button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">◐</button>';
     if (!session) {
       nav.innerHTML = '';
-      actions.innerHTML = `<a class="nav-plain" href="#/login">Log in</a><a class="btn btn-primary btn-sm" href="#/signup">Sign up</a>${theme}`;
+      actions.innerHTML = `<button class="btn btn-sm btn-install" id="install-btn" type="button" hidden>⬇ Install app</button><a class="nav-plain" href="#/login">Log in</a><a class="btn btn-primary btn-sm" href="#/signup">Sign up</a>${theme}`;
     } else {
       const link = (nav, href, icon, label) => `<a href="${href}" data-nav="${nav}"><span class="nav-ico" aria-hidden="true">${icon}</span><span>${label}</span></a>`;
       nav.innerHTML = [
@@ -340,17 +348,44 @@ export function mount(root, { apiUrl }) {
         link('offline', '#/offline', '📥', 'Offline'),
         link('leaderboard', '#/leaderboard', '🏆', 'Rankings'),
         link('playground', '#/playground', '🧪', 'Playground'),
+        link('arcade', '#/arcade', '🎮', 'Arcade'),
         isAdmin() ? link('admin', '#/admin', '🛠️', 'Manage') : '',
       ].join('');
       const initials = (session.user.display_name || session.user.username).split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
       actions.innerHTML = `
+        <button class="btn btn-sm btn-install" id="install-btn" type="button" hidden>⬇ Install app</button>
         <a class="sync-pill" id="sync-pill" href="#/offline" aria-live="polite"></a>
         <a class="avatar-link" href="#/profile" data-nav="profile" title="Your profile" aria-label="Your profile"><span class="avatar">${esc(initials)}</span></a>
         ${theme}`;
       renderSyncPill();
     }
     $('#theme-toggle', root).addEventListener('click', toggleTheme);
+    $('#install-btn', root).addEventListener('click', installApp);
+    renderInstallButton();
     markNav();
+  }
+
+  /* ================= Install (Progressive Web App) ================= */
+  function renderInstallButton() {
+    const btn = $('#install-btn', root);
+    if (btn) btn.hidden = installState() !== 'available';
+  }
+
+  async function installApp() {
+    if (installState() !== 'available') { location.hash = '#/offline'; return; }
+    const accepted = await promptInstall();
+    renderInstallButton();
+    if (accepted) toast('🎉 Codelingo is installed. Open it from your home screen or apps, even offline.');
+    refreshView();
+  }
+
+  /** Install instructions for the current browser (used on the landing page and Offline Center). */
+  function installHelpHTML() {
+    const state = installState();
+    if (state === 'installed') return '<p class="install-ok">✓ Installed. You\'re using the Codelingo app.</p>';
+    if (state === 'available') return '<button class="btn btn-primary" type="button" data-install>⬇ Install Codelingo</button>';
+    if (state === 'ios') return '<p class="small">On iPhone or iPad: tap <b>Share</b> <span aria-hidden="true">⎋</span> then <b>Add to Home Screen</b>.</p>';
+    return '<p class="small">In Chrome or Edge, open the browser menu (⋮ or …) and choose <b>Install Codelingo</b> or <b>Add to Home screen</b>. Safari on Mac: <b>File → Add to Dock</b>.</p>';
   }
 
   function markNav() {
@@ -385,6 +420,7 @@ export function mount(root, { apiUrl }) {
     if (a === 'profile') return { name: 'profile', nav: 'profile', params: {} };
     if (a === 'leaderboard') return { name: 'leaderboard', nav: 'leaderboard', params: {} };
     if (a === 'playground') return { name: 'playground', nav: 'playground', params: {} };
+    if (a === 'arcade') return GAMES[b] ? { name: 'game', nav: 'arcade', params: { id: b } } : { name: 'arcade', nav: 'arcade', params: {} };
     if (a === 'admin' && isAdmin()) {
       if (b === 'new') return { name: 'admin-edit', nav: 'admin', params: { id: null } };
       if (b === 'edit' && c) return { name: 'admin-edit', nav: 'admin', params: { id: c } };
@@ -411,6 +447,8 @@ export function mount(root, { apiUrl }) {
       case 'profile': renderProfile(); break;
       case 'leaderboard': renderLeaderboard(); break;
       case 'playground': renderPlayground(); break;
+      case 'arcade': renderArcade(); break;
+      case 'game': renderGame(p.id); break;
       case 'admin': renderAdminList(adminCtx()); break;
       case 'admin-edit': renderEditor(adminCtx(), p.id); break;
       default: renderHome();
@@ -421,7 +459,7 @@ export function mount(root, { apiUrl }) {
   /** Re-render passive pages after data changes, keeping the scroll position. */
   function refreshView() {
     if (disposed || !current) return;
-    if (['home', 'course', 'offline', 'profile'].includes(current.name)) {
+    if (['home', 'course', 'offline', 'profile', 'arcade', 'landing'].includes(current.name)) {
       const y = window.scrollY;
       route({ keepScroll: true });
       window.scrollTo(0, y);
@@ -470,14 +508,16 @@ export function mount(root, { apiUrl }) {
             <a class="btn btn-primary btn-lg" href="#/signup">Create a free account</a>
             <a class="btn btn-lg" href="#/login">Log in</a>
           </div>
+          <div class="hero-install">${installHelpHTML()}</div>
         </section>
         <section class="steps">
-          <div class="step"><div class="num">⬇</div><b>Download once</b><span>Save whole courses to your device when you have internet.</span></div>
-          <div class="step"><div class="num">📴</div><b>Learn offline</b><span>Lessons, quizzes and activities all work with no connection.</span></div>
-          <div class="step"><div class="num">🔄</div><b>Sync automatically</b><span>Progress is queued on your device and syncs when you reconnect.</span></div>
-          <div class="step"><div class="num">🏅</div><b>Earn badges</b><span>Build streaks, collect badges and climb the rankings.</span></div>
+          <div class="step"><div class="num">⬇</div><b>Install & download</b><span>Install Codelingo like an app and save whole courses while you have internet.</span></div>
+          <div class="step"><div class="num">📴</div><b>Learn offline</b><span>Lessons, quizzes, activities and coding games all work with no connection.</span></div>
+          <div class="step"><div class="num">🔄</div><b>Sync automatically</b><span>Progress is saved on your device and syncs when you reconnect.</span></div>
+          <div class="step"><div class="num">🎮</div><b>Play to learn</b><span>Explore Code Dungeon and grow Pixel Farm by writing real code.</span></div>
         </section>
       </div>`;
+    $('[data-install]', app)?.addEventListener('click', installApp);
   }
 
   /* ================= Sign up / log in ================= */
@@ -639,6 +679,14 @@ export function mount(root, { apiUrl }) {
           ${cont ? `<a class="btn btn-primary btn-lg" href="#/learn/${esc(cont.course.id)}/${esc(cont.item.id)}" ${canOpen(cont.course) ? '' : 'aria-disabled="true"'}>Continue: ${esc(cont.item.title)} →</a>` : ''}
         </section>
 
+        ${['available', 'ios'].includes(installState()) && !readJSON('codelingo-install-dismissed') ? `
+        <div class="install-banner">
+          <img src="/logo-96.png" alt="" width="44" height="44">
+          <div><b>Install Codelingo</b><span>Open it like an app and keep learning with no internet.</span></div>
+          ${installState() === 'available' ? '<button class="btn btn-primary btn-sm" type="button" data-install>Install</button>' : '<span class="small">Tap <b>Share</b> → <b>Add to Home Screen</b></span>'}
+          <button class="icon-btn icon-sm" type="button" data-dismiss-install aria-label="Dismiss">✕</button>
+        </div>` : ''}
+
         <section class="stats" aria-label="Your progress">
           <a class="stat" href="#/profile"><b>${st.xp}</b><span>XP</span></a>
           <a class="stat" href="#/profile"><b>${st.streak}${st.streak ? ' 🔥' : ''}</b><span>day streak</span></a>
@@ -660,6 +708,8 @@ export function mount(root, { apiUrl }) {
       </div>`;
 
     $$('[data-filter]', app).forEach((b) => b.addEventListener('click', () => { filter = b.dataset.filter; refreshView(); }));
+    $('[data-install]', app)?.addEventListener('click', installApp);
+    $('[data-dismiss-install]', app)?.addEventListener('click', () => { writeJSON('codelingo-install-dismissed', true); refreshView(); });
   }
 
   /* ================= Course overview ================= */
@@ -1055,6 +1105,17 @@ export function mount(root, { apiUrl }) {
           </div>
         </div>
 
+        <section class="app-card">
+          <div class="app-card-main">
+            <span class="oc-label">Codelingo on this device</span>
+            <ul class="app-checks">
+              <li id="app-files"><span class="check-dot" aria-hidden="true">…</span><span>Checking whether the app is saved for offline use…</span></li>
+              <li class="${installState() === 'installed' ? 'is-ok' : ''}"><span class="check-dot" aria-hidden="true">${installState() === 'installed' ? '✓' : '○'}</span><span>${installState() === 'installed' ? 'Installed as an app' : 'Not installed yet. Installing adds Codelingo to your home screen or apps, and it opens with no internet.'}</span></li>
+            </ul>
+          </div>
+          <div class="app-card-action">${installHelpHTML()}</div>
+        </section>
+
         <section class="oc-grid">
           <div class="oc-card oc-status" data-state="${s.state}">
             <span class="oc-label">Sync status</span>
@@ -1115,6 +1176,21 @@ export function mount(root, { apiUrl }) {
             </div>`).join('')}
         </div>` : ''}
       </div>`;
+
+    $('[data-install]', app)?.addEventListener('click', installApp);
+    const ocGen = generation;
+    appOfflineStatus().then((st) => {
+      const el = $('#app-files');
+      if (!el || ocGen !== generation) return;
+      const line = {
+        ready: ['✓', 'is-ok', `App saved for offline use: Codelingo and both Arcade games open with no internet (${st.files} files).`],
+        preparing: ['…', '', 'Saving the app for offline use. Keep this page open for a moment while you\'re connected.'],
+        dev: ['i', '', 'Offline app saving runs in the deployed app (npm run build / Vercel), not in npm run dev.'],
+        unsupported: ['!', 'is-warn', 'This browser can\'t save the app for offline use. Try Chrome, Edge or Safari.'],
+      }[st.state];
+      el.className = line[1];
+      el.innerHTML = `<span class="check-dot" aria-hidden="true">${line[0]}</span><span>${esc(line[2])}</span>`;
+    });
 
     $('#sync-now').addEventListener('click', async () => {
       if (!navigator.onLine) { toast("You're offline. Your changes will sync automatically when you reconnect."); }
@@ -1342,6 +1418,111 @@ export function mount(root, { apiUrl }) {
     draw();
   }
 
+  /* ================= Arcade: coding games ================= */
+  // Each game is a self-contained page in public/games, shown in a frame and saved for
+  // offline use by the service worker. A game saves to localStorage under a key for this
+  // learner; the app copies that save into progress.play["game:<id>"] so it syncs.
+  const GAMES = {
+    dungeon: {
+      title: 'Code Dungeon', icon: '🏰', file: '/games/code-dungeon.html', hue: 258, lang: 'Python',
+      blurb: 'Explore mysterious rooms, collect coins and unlock magic gates by writing real Python.',
+      skills: ['Variables', 'If statements', 'Loops'],
+      stats: (s) => [`Level ${Math.min(3, (Number(s.level) || 0) + 1)} of 3`, `🪙 ${s.coins || 0}`, `⭐ ${s.xp || 0} XP`],
+    },
+    farm: {
+      title: 'Pixel Farm', icon: '🌽', file: '/games/pixel-farm.html', hue: 95, lang: 'Python-style',
+      blurb: 'Help Moo grow a farm: plant, water and harvest crops with loops and function calls.',
+      skills: ['Function calls', 'For loops', '2D grids'],
+      stats: (s) => [`Farm level ${Math.floor((Number(s.xp) || 0) / 200) + 1}`, `🪙 ${s.coins ?? 120}`, `🧺 ${s.stats?.harvested || 0} harvested`],
+    },
+  };
+  const gameKey = (id) => `codelingo-game:${id}:${session.user.username.toLowerCase()}`;
+  const playKey = (id) => `game:${id}`;
+  let gameSyncPending = false;
+  const queueGameSync = debounce(() => { gameSyncPending = false; saveProgress(); }, 2500);
+
+  function readSave(json) {
+    try { const v = JSON.parse(json); return v && typeof v === 'object' ? v : null; } catch { return null; }
+  }
+  function saveTime(json) { return Number(readSave(json)?.updatedAt) || 0; }
+
+  /** Before a game starts: if the account has a newer save (another device), put it where the game reads it. */
+  function prepareGameSave(id) {
+    const synced = store.play[playKey(id)];
+    try {
+      const local = localStorage.getItem(gameKey(id));
+      if (synced && saveTime(synced) > saveTime(local)) localStorage.setItem(gameKey(id), synced);
+      else if (local && saveTime(local) > saveTime(synced)) { store.play[playKey(id)] = local; queueGameSync(); }
+    } catch { /* storage blocked: the game still runs for this visit */ }
+  }
+
+  // The game frame writes to localStorage; other windows (this app) get a storage event.
+  on(window, 'storage', (e) => {
+    if (!session || !e.key?.startsWith('codelingo-game:') || !e.newValue) return;
+    for (const id of Object.keys(GAMES)) {
+      if (e.key === gameKey(id) && saveTime(e.newValue) >= saveTime(store.play[playKey(id)])) {
+        store.play[playKey(id)] = e.newValue;
+        gameSyncPending = true;
+        queueGameSync();
+      }
+    }
+  });
+
+  function flushGameSync() {
+    if (!gameSyncPending) return;
+    queueGameSync.cancel();
+    gameSyncPending = false;
+    saveProgress();
+  }
+
+  function renderArcade() {
+    document.title = 'Arcade · Codelingo';
+    app.innerHTML = `
+      <div class="page arcade">
+        <div class="page-head">
+          <div>
+            <span class="eyebrow">Second playground</span>
+            <h1>Arcade</h1>
+            <p class="muted">Learn to code by playing. Both games work offline, and your progress saves to your account.</p>
+          </div>
+          <a class="btn" href="#/playground">🧪 Code Playground</a>
+        </div>
+        <section class="game-grid">
+          ${Object.entries(GAMES).map(([id, g]) => {
+            const save = readSave(store.play[playKey(id)]) || readSave((() => { try { return localStorage.getItem(gameKey(id)); } catch { return null; } })());
+            return `
+              <article class="game-tile" style="--h:${g.hue}">
+                <a class="game-art" href="#/arcade/${id}" tabindex="-1" aria-hidden="true"><span>${g.icon}</span></a>
+                <div class="game-body">
+                  <div class="card-tags">
+                    <span class="tag tag-subject" style="--h:${g.hue}">${esc(g.lang)}</span>
+                    <span class="tag tag-offline">✓ Works offline</span>
+                  </div>
+                  <h2><a href="#/arcade/${id}">${esc(g.title)}</a></h2>
+                  <p class="card-desc">${esc(g.blurb)}</p>
+                  <div class="skill-row">${g.skills.map((s) => `<span class="skill">${esc(s)}</span>`).join('')}</div>
+                  <div class="game-stats">${save ? g.stats(save).map((s) => `<span>${esc(s)}</span>`).join('') : '<span>New game</span>'}</div>
+                  <a class="btn btn-primary" href="#/arcade/${id}">${save ? '▶ Continue' : '▶ Play'}</a>
+                </div>
+              </article>`;
+          }).join('')}
+        </section>
+      </div>`;
+  }
+
+  function renderGame(id) {
+    const g = GAMES[id];
+    document.title = `${g.title} · Codelingo`;
+    prepareGameSave(id);
+    app.innerHTML = `
+      <div class="game-stage">
+        <iframe class="game-frame" src="${g.file}?save=${encodeURIComponent(gameKey(id))}" title="${esc(g.title)}" allow="fullscreen"></iframe>
+      </div>`;
+    const frame = $('.game-frame', app);
+    frame.addEventListener('load', () => frame.focus());
+    teardown = flushGameSync;
+  }
+
   /* ================= Playground ================= */
   const PLAY_DEFAULTS = {
     web: [
@@ -1467,6 +1648,8 @@ export function mount(root, { apiUrl }) {
     route();
   }
 
+  // The browser offered (or completed) an install: update the Install buttons.
+  on(window, 'codelingo:install', () => { renderInstallButton(); refreshView(); });
   on(window, 'online', () => setOnline(true));
   on(window, 'offline', () => setOnline(false));
   on(document, 'visibilitychange', () => {

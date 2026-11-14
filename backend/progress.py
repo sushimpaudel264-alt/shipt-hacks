@@ -37,7 +37,25 @@ class Progress(BaseModel):
     days: list[str] = Field(default_factory=list)              # local dates with a completion (streaks)
     badges: dict[str, str] = Field(default_factory=dict)       # badge id -> ISO time earned
     last: str | None = None                                    # last visited "course/item"
-    play: dict[str, str] = Field(default_factory=dict)         # playground code per mode
+    play: dict[str, str] = Field(default_factory=dict)         # playground code per mode; "game:<id>" = Arcade save (JSON)
+
+
+def save_time(value: str) -> float:
+    """updatedAt of an Arcade game save (a JSON string); 0 if missing or unreadable."""
+    try:
+        return float(json.loads(value).get("updatedAt") or 0)
+    except (ValueError, TypeError, AttributeError):
+        return 0
+
+
+def merge_play(old: dict[str, str], new: dict[str, str]) -> dict[str, str]:
+    play = dict(old)
+    for key, value in new.items():
+        # A device with an older game save must not overwrite newer progress from another device.
+        if key.startswith("game:") and key in play and save_time(play[key]) > save_time(value):
+            continue
+        play[key] = value
+    return play
 
 
 def merge(old: Progress, new: Progress) -> Progress:
@@ -62,7 +80,7 @@ def merge(old: Progress, new: Progress) -> Progress:
         days=sorted(set(old.days) | set(new.days)),
         badges=badges,
         last=new.last or old.last,
-        play={**old.play, **new.play},
+        play=merge_play(old.play, new.play),
     )
 
 
